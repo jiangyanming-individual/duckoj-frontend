@@ -30,6 +30,7 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
   padding: 10px;
   margin-bottom: 16px;
 }
+
 #layouts .footer {
   background: #efefef;
   padding: 16px;

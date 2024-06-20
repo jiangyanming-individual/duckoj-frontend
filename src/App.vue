@@ -9,9 +9,18 @@
 import BasticLayouts from "@/layouts/BasticLayouts.vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
+import { onMounted } from "vue";
 
 const router = useRouter();
 const store = useStore();
+
+const doInit = () => {
+  console.log("全局入口");
+};
+
+onMounted(() => {
+  doInit();
+});
 
 //定义路由跳转的权限：
 router.beforeEach((to, from, next) => {
