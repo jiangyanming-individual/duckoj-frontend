@@ -1,6 +1,6 @@
 <template>
   <div id="layouts">
-    <a-layout style="height: 400px">
+    <a-layout style="min-height: 100vh">
       <a-layout-header class="header">
         <GlobalHeader />
       </a-layout-header>
@@ -23,18 +23,17 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 }
 
 #layouts .header {
-  background: red;
-  margin-bottom: 16px;
 }
 
 #layouts .content {
   background: linear-gradient(to left, #bbb, #fff);
+  padding: 10px;
   margin-bottom: 16px;
 }
 #layouts .footer {
   background: #efefef;
   padding: 16px;
-  position: absolute;
+  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
