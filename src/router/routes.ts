@@ -6,6 +6,7 @@ import ACCESS_ENUM from "@/access/accessEnum";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
+import AboutView from "@/views/AboutView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -36,7 +37,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/hide",
     name: "隐藏页面",
-    component: HomeView,
+    component: AboutView,
     meta: {
       hideInMenu: true,
     },

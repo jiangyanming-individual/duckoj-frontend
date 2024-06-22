@@ -62,7 +62,7 @@ const handleSubmit = async () => {
       replace: true,
     });
   } else {
-    message.error("登录失败," + res?.message);
+    message.error("登录失败，" + `${res?.message ?? "不能输入空内容"}`);
   }
 };
 </script>

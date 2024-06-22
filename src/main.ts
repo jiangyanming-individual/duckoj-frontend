@@ -6,6 +6,7 @@ import App from "./App.vue";
 import "@arco-design/web-vue/dist/arco.css";
 import "@/plugins/axios";
 import "@/access"; //导入全局校验
+import "bytemd/dist/index.css";
 
 const app = createApp(App);
 app.use(ArcoVue);

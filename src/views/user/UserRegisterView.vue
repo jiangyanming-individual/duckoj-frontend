@@ -64,12 +64,13 @@ const handleSubmit = async () => {
   const res = await UserControllerService.userRegisterUsingPost(form);
   if (res.code === 0) {
     message.success("注册成功!");
+    //跳转到登录页面
     router.push({
       path: "/user/login",
       replace: true,
     });
   } else {
-    message.error("注册失败，" + res?.message);
+    message.error("注册失败，" + `${res?.message ?? "请输入内容注册"}`);
   }
 };
 </script>
