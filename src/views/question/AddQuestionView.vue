@@ -79,10 +79,10 @@
           :key="index"
           no-style
         >
-          <a-space direction="vertical" style="min-width: 500px">
+          <a-space direction="horizontal" style="min-width: 900px">
             <a-form-item
               :field="`form.judgeCase[${index}].input`"
-              :label="`输入用例-${index}：`"
+              :label="`输入用例-${index + 1}：`"
               :key="index"
             >
               <a-input
@@ -92,25 +92,26 @@
             </a-form-item>
             <a-form-item
               :field="`form.judgeCase[${index}].output`"
-              :label="`输出用例-${index}：`"
+              :label="`输出用例-${index + 1}：`"
               :key="index"
             >
               <a-input
                 v-model="judgeCaseItem.output"
                 placeholder="请输入判题输出用例"
               />
+              <a-button
+                type="outline"
+                status="danger"
+                :style="{ marginLeft: '16px' }"
+                @click="handleDelete(index)"
+              >
+                删除判题用例
+              </a-button>
             </a-form-item>
           </a-space>
         </a-form-item>
-        <a-space direction="horizontal" size="large">
-          <a-button
-            type="outline"
-            status="danger"
-            @click="handleDelete(index)"
-            shape="round"
-          >
-            删除判题用例
-          </a-button>
+        <a-divider :size="2" style="border-bottom-style: dotted" />
+        <a-space direction="horizontal" size="large" style="margin-top: 16px">
           <a-button
             @click="handleAdd"
             type="outline"
@@ -174,6 +175,35 @@ const loadData = async () => {
   if (res.code === 0) {
     //设置数据：
     form.value = res.data as any;
+    //解析json数据
+    if (!form.value.tags) {
+      form.value.tags = [];
+    } else {
+      form.value.tags = JSON.parse(form.value.tags as any);
+    }
+    if (!form.value.judgeCase) {
+      form.value.judgeCase = [
+        {
+          input: "",
+          output: "",
+        },
+      ];
+    } else {
+      form.value.judgeCase = JSON.parse(form.value.judgeCase as any);
+    }
+
+    //解析json数据
+    if (!form.value.judgeConfig) {
+      form.value.judgeConfig = {
+        memoryLimit: 1000,
+        stackLimit: 1000,
+        timeLimit: 1000,
+      };
+    } else {
+      form.value.judgeConfig = JSON.parse(form.value.judgeConfig as any);
+    }
+  } else {
+    message.error("加载数据失败！");
   }
 };
 
