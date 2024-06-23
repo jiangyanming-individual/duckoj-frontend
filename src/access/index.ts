@@ -4,10 +4,12 @@ import ACCESS_ENUM from "@/access/accessEnum";
 import checkAccess from "@/access/checkAccess";
 //定义路由跳转的权限：
 router.beforeEach(async (to, from, next) => {
-  const loginUser = store.state.user.loginUser;
+  let loginUser = store.state.user.loginUser;
   //自动登录：
   if (!loginUser || !loginUser.userRole) {
     await store.dispatch("user/getLoginUser");
+    //登录之后，重新获取loginUser
+    loginUser = store.state.user.loginUser;
   }
 
   //需要的权限：

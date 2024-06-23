@@ -13,11 +13,57 @@
       fixed="left"
       :scroll="scroll"
     >
+      <template #tags="{ record }">
+        <a-space wrap>
+          <a-tag
+            v-for="(tag, index) of JSON.parse(record.tags)"
+            :key="index"
+            :color="colors[index]"
+            closable
+            >{{ tag }}
+          </a-tag>
+        </a-space>
+      </template>
+
+      <template #judgeCase="{ record }">
+        <a-space>
+          <a-list :bordered="false">
+            <a-list-item
+              v-for="(item, index) of JSON.parse(record.judgeCase)"
+              :key="index"
+              action-layout="vertical"
+              max-height="240"
+            >
+              <a-list-item v-for="(item2, index2) of item" :key="index2">
+                {{ `${index2} : ${item2}` }}
+              </a-list-item>
+            </a-list-item>
+          </a-list>
+        </a-space>
+      </template>
+
       <template #optional="{ record }">
         <a-space>
           <a-button type="primary" @click="doUpdate(record)">更新</a-button>
           <a-button status="danger" @click="doDelete(record)">删除</a-button>
         </a-space>
+      </template>
+      <template #judgeConfig="{ record }">
+        <a-space>
+          <a-list :bordered="false">
+            <a-list-item
+              v-for="(item, index) of JSON.parse(record.judgeConfig)"
+              :key="index"
+              action-layout="vertical"
+              max-height="240"
+              style="min-width: 100px"
+              >{{ `${index} : ${item}` }}
+            </a-list-item>
+          </a-list>
+        </a-space>
+      </template>
+      <template #createTime="{ record }">
+        {{ moment(record.createTime).format("YYYY-MM-DD") }}
       </template>
     </a-table>
   </div>
@@ -27,6 +73,8 @@ import { onMounted, ref, watchEffect } from "vue";
 import { Question, QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
+import moment from "moment/moment";
+import Json from "@apidevtools/json-schema-ref-parser/lib/parsers/json";
 
 const router = useRouter();
 const dataList = ref([]);
@@ -130,7 +178,7 @@ const columns = [
   },
   {
     title: "标签",
-    dataIndex: "tags",
+    slotName: "tags",
   },
   {
     title: "内容",
@@ -143,11 +191,15 @@ const columns = [
   },
   {
     title: "判题样例",
-    dataIndex: "judgeCase",
+    slotName: "judgeCase",
+    fixed: "left",
+    width: 150,
   },
   {
     title: "判题配置",
-    dataIndex: "judgeConfig",
+    slotName: "judgeConfig",
+    fixed: "left",
+    width: 220,
   },
   {
     title: "提交数",
@@ -159,15 +211,35 @@ const columns = [
   },
   {
     title: "创建时间",
-    dataIndex: "createTime",
+    slotName: "createTime",
+    fixed: "left",
+    width: 120,
   },
   {
     title: "操作",
     slotName: "optional",
   },
 ];
+
+const colors = [
+  "blue",
+  "red",
+  "orangered",
+  "orange",
+  "gold",
+  "lime",
+  "green",
+  "cyan",
+  "arcoblue",
+  "purple",
+  "pinkpurple",
+  "magenta",
+  "gray",
+];
 </script>
 <style scoped>
 #manageQuestionView {
+  max-width: 1280px;
+  margin: auto;
 }
 </style>
