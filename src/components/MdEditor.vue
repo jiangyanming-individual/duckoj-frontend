@@ -14,6 +14,7 @@ const plugins = [gfm(), highlight()];
  */
 interface Props {
   value: string;
+  mode?: string;
   handleChange: (v: string) => void;
 }
 
@@ -22,9 +23,14 @@ interface Props {
  */
 const props = withDefaults(defineProps<Props>(), {
   value: () => "",
+  mode: () => "split",
   handleChange: (v: string) => {
     console.log(v);
   },
 });
 </script>
-<style scoped></style>
+<style>
+.bytemd-toolbar-icon.bytemd-tippy.bytemd-tippy-right:last-child {
+  display: none;
+}
+</style>

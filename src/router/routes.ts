@@ -7,6 +7,8 @@ import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
 import AboutView from "@/views/AboutView.vue";
+import AddQuestionView from "@/views/question/AddQuestionView.vue";
+import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -35,6 +37,21 @@ export const routes: Array<RouteRecordRaw> = [
     component: HomeView,
   },
   {
+    path: "/add/question",
+    name: "创建题目",
+    component: AddQuestionView,
+  },
+  {
+    path: "/update/question",
+    name: "更新题目",
+    component: AddQuestionView,
+  },
+  {
+    path: "/manage/question",
+    name: "管理题目",
+    component: ManageQuestionView,
+  },
+  {
     path: "/hide",
     name: "隐藏页面",
     component: AboutView,
@@ -57,7 +74,7 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: "/about",
-    name: "关于我的",
+    name: "个人主页",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },

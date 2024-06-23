@@ -47,6 +47,7 @@ onMounted(() => {
   if (!contentRef.value) {
     return;
   }
+  //创建代码编辑器的样式以及内容
   codeEditor.value = monaco.editor.create(contentRef.value, {
     value: props.value, //内容
     language: "java", //语言设置

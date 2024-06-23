@@ -26,13 +26,13 @@ import GlobalHeader from "@/components/GlobalHeader.vue";
 }
 
 #layouts .content {
-  background: linear-gradient(to left, #bbb, #fff);
+  background: linear-gradient(to left, #fefefe, #ffffff);
   padding: 10px;
   margin-bottom: 16px;
 }
 
 #layouts .footer {
-  background: #efefef;
+  background: #fefefe;
   padding: 16px;
   position: sticky;
   bottom: 0;
