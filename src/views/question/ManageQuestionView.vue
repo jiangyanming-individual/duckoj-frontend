@@ -43,10 +43,14 @@
       </template>
 
       <template #optional="{ record }">
-        <a-space>
-          <a-button type="primary" @click="doUpdate(record)">更新</a-button>
-          <a-button status="danger" @click="doDelete(record)">删除</a-button>
-        </a-space>
+        <a-button type="primary" @click="doUpdate(record)">更新</a-button>
+        <a-button
+          type="primary"
+          status="danger"
+          @click="doDelete(record)"
+          style="margin-top: 16px"
+          >删除
+        </a-button>
       </template>
       <template #judgeConfig="{ record }">
         <a-space>
@@ -74,7 +78,6 @@ import { Question, QuestionControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment/moment";
-import Json from "@apidevtools/json-schema-ref-parser/lib/parsers/json";
 
 const router = useRouter();
 const dataList = ref([]);
@@ -86,7 +89,7 @@ const searchParams = ref({
 });
 
 const scroll = {
-  x: "60%",
+  x: "100%",
   y: "100%",
 };
 
@@ -166,28 +169,34 @@ const columns = [
   {
     title: "id",
     dataIndex: "id",
+    fixed: "left",
   },
 
   {
     title: "标题",
     dataIndex: "title",
+    fixed: "left",
   },
   {
     title: "userId",
     dataIndex: "userId",
+    fixed: "left",
   },
   {
     title: "标签",
     slotName: "tags",
+    fixed: "left",
   },
   {
     title: "内容",
     dataIndex: "content",
+    fixed: "left",
   },
 
   {
     title: "答案",
     dataIndex: "answer",
+    fixed: "left",
   },
   {
     title: "判题样例",
@@ -204,10 +213,12 @@ const columns = [
   {
     title: "提交数",
     dataIndex: "submitNum",
+    fixed: "left",
   },
   {
     title: "通过数",
     dataIndex: "acceptedNum",
+    fixed: "left",
   },
   {
     title: "创建时间",
@@ -218,6 +229,7 @@ const columns = [
   {
     title: "操作",
     slotName: "optional",
+    fixed: "left",
   },
 ];
 
@@ -239,7 +251,6 @@ const colors = [
 </script>
 <style scoped>
 #manageQuestionView {
-  max-width: 1280px;
   margin: auto;
 }
 </style>

@@ -10,6 +10,7 @@ import AboutView from "@/views/AboutView.vue";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
 import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
 import QuestionView from "@/views/question/QuestionView.vue";
+import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -59,7 +60,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/view/question/:id",
     name: "在线做题",
-    component: AddQuestionView,
+    component: ViewQuestionView,
     props: true, //将id设置为页面属性
     meta: {
       hideInMenu: true,

@@ -1,5 +1,5 @@
 <template>
-  <div id="manageQuestionView">
+  <div id="questionView">
     <a-form :model="searchParams" layout="inline" style="margin-bottom: 16px">
       <a-form-item field="title" label="题目">
         <a-input
@@ -69,6 +69,7 @@ import {
   Question,
   QuestionControllerService,
   QuestionQueryRequest,
+  QuestionVO,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
@@ -130,10 +131,10 @@ const onPageChange = (page: number) => {
 /**
  * 更新操作，根据路由跳转到更新页：
  */
-const doViewQuestion = (question: Question) => {
+const doViewQuestion = (question: QuestionVO) => {
   //路由使用，携带查询参数：
   router.push({
-    path: `/view/question/:${question.id}`,
+    path: `/view/question/${question.id}`,
   });
 };
 
@@ -180,7 +181,7 @@ const columns = [
 ];
 </script>
 <style scoped>
-#manageQuestionView {
+#questionView {
   max-width: 1280px;
   margin: 0 auto;
 }
