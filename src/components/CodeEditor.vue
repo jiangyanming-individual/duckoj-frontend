@@ -34,6 +34,21 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 /**
+ * 用于监听语言切换
+ */
+watch(
+  () => props.language,
+  () => {
+    if (codeEditor.value) {
+      monaco.editor.setModelLanguage(
+        toRaw(codeEditor.value).getModel(),
+        props.language
+      );
+    }
+  }
+);
+
+/**
  * 挂载元素：
  */
 onMounted(() => {

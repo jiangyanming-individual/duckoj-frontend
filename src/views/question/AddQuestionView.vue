@@ -168,10 +168,14 @@ const form = ref({
  */
 const loadData = async () => {
   const id = route.query.id;
+
+  if (id == null) {
+    message.info("首次加载页面");
+    return;
+  }
   const res = await QuestionControllerService.getQuestionByIdUsingGet(
     id as any
   );
-
   if (res.code === 0) {
     //设置数据：
     form.value = res.data as any;

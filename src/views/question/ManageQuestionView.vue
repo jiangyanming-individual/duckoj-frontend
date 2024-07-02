@@ -167,7 +167,7 @@ const doDelete = async (question: Question) => {
  */
 const columns = [
   {
-    title: "id",
+    title: "题目ID",
     dataIndex: "id",
     fixed: "left",
   },
@@ -187,11 +187,11 @@ const columns = [
     slotName: "tags",
     fixed: "left",
   },
-  {
-    title: "内容",
-    dataIndex: "content",
-    fixed: "left",
-  },
+  // {
+  //   title: "内容",
+  //   dataIndex: "content",
+  //   fixed: "left",
+  // },
 
   {
     title: "答案",

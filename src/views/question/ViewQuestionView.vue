@@ -1,6 +1,5 @@
 <template>
   <div id="viewQuestionView">
-    <!--    {{ question }}-->
     <a-row class="grid-demo" :gutter="[24, 12]">
       <a-col :span="12" :md="12" :xs="24">
         <a-tabs default-active-key="question">
@@ -55,11 +54,12 @@
               <a-option>java</a-option>
               <a-option>c++</a-option>
               <a-option>golang</a-option>
+              <a-option>python</a-option>
             </a-select>
           </a-form-item>
           <a-button type="outline" status="danger" @click="doSubmit"
-            >提交代码</a-button
-          >
+            >提交代码
+          </a-button>
         </a-form>
         <a-card>
           <CodeEditor
@@ -77,7 +77,6 @@ import { onMounted, ref, watchEffect } from "vue";
 import {
   QuestionControllerService,
   QuestionSubmitAddRequest,
-  QuestionSubmitControllerService,
   QuestionVO,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
@@ -143,14 +142,14 @@ onMounted(() => {
 });
 
 /**
- * 提交代码
+ * 向后端提交问题代码
  */
 const doSubmit = async () => {
   if (!question.value?.id) {
     return;
   }
   //向后端提交请求
-  const res = await QuestionSubmitControllerService.doQuestionSubmitUsingPost({
+  const res = await QuestionControllerService.doQuestionSubmitUsingPost({
     ...form.value,
     questionId: question.value?.id,
   });
