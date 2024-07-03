@@ -1,17 +1,17 @@
 import { RouteRecordRaw } from "vue-router";
-import HomeView from "@/views/HomeView.vue";
 import NoAuthView from "@/views/NoAuthView.vue";
-import AdminView from "@/views/AdminView.vue";
 import ACCESS_ENUM from "@/access/accessEnum";
 import UserLayout from "@/layouts/UserLayout.vue";
 import UserLoginView from "@/views/user/UserLoginView.vue";
 import UserRegisterView from "@/views/user/UserRegisterView.vue";
-import AboutView from "@/views/AboutView.vue";
 import AddQuestionView from "@/views/question/AddQuestionView.vue";
-import ManageQuestionView from "@/views/question/ManageQuestionView.vue";
+import ManageQuestionView from "@/views/admin/ManageQuestionView.vue";
 import QuestionView from "@/views/question/QuestionView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
+import UserListView from "@/views/admin/UserListView.vue";
+import AddUserView from "@/views/admin/AddUserView.vue";
+import UpdateUserView from "@/views/admin/UpdateUserView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -62,7 +62,6 @@ export const routes: Array<RouteRecordRaw> = [
       access: ACCESS_ENUM.USER,
     },
   },
-
   {
     path: "/view/question/:id",
     name: "在线做题",
@@ -74,9 +73,33 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/manage/question",
-    name: "管理题目",
+    path: "/admin/manage/question",
+    name: "题目管理",
     component: ManageQuestionView,
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+    },
+  },
+  {
+    path: "/admin/userList",
+    name: "用户管理",
+    component: UserListView,
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+    },
+  },
+  {
+    path: "/admin/add/user",
+    name: "新增用户",
+    component: AddUserView,
+    meta: {
+      access: ACCESS_ENUM.ADMIN,
+    },
+  },
+  {
+    path: "/admin/update/user",
+    name: "更新用户",
+    component: UpdateUserView,
     meta: {
       access: ACCESS_ENUM.ADMIN,
     },
@@ -86,14 +109,6 @@ export const routes: Array<RouteRecordRaw> = [
     name: "主页",
     component: QuestionView,
   },
-  // {
-  //   path: "/hide",
-  //   name: "隐藏页面",
-  //   component: AboutView,
-  //   meta: {
-  //     hideInMenu: true,
-  //   },
-  // },
   {
     path: "/noAuth",
     name: "无权限",
@@ -102,14 +117,6 @@ export const routes: Array<RouteRecordRaw> = [
       hideInMenu: true,
     },
   },
-  // {
-  //   path: "/admin",
-  //   name: "仅管理员可见",
-  //   component: AdminView,
-  //   meta: {
-  //     access: ACCESS_ENUM.ADMIN,
-  //   },
-  // },
   {
     path: "/about",
     name: "个人主页",

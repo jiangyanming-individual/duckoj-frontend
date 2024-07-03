@@ -91,9 +91,11 @@ const searchParams = ref<QuestionQueryRequest>({
  */
 const loadData = async () => {
   //获取数据
-  const res = await QuestionControllerService.listQuestionVoByPageUsingPost(
-    searchParams.value
-  );
+  const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
+    ...searchParams.value,
+    sortField: "createTime",
+    sortOrder: "descend",
+  });
   //获取分页数据
   if (res.code === 0) {
     dataList.value = res.data.records;
