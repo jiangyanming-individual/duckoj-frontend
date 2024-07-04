@@ -30,7 +30,17 @@
       </div>
     </a-col>
     <a-col flex="100px">
-      <div>{{ store.state.user?.loginUser?.userName ?? "未登录" }}</div>
+      <div class="menu">
+        <a-dropdown :popup-max-height="false" trigger="hover">
+          <a-avatar
+            >{{ store.state.user?.loginUser?.userName ?? "未登录" }}
+          </a-avatar>
+          <template #content>
+            <a-doption @click="doLogin"> 登录</a-doption>
+            <a-doption @click="doLogout"> 退出</a-doption>
+          </template>
+        </a-dropdown>
+      </div>
     </a-col>
   </a-row>
 </template>
@@ -38,10 +48,13 @@
 <script setup lang="ts">
 import { routes } from "../router/routes";
 import { useRouter } from "vue-router";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { useStore } from "vuex";
 import ACCESS_ENUM from "@/access/accessEnum";
 import checkAccess from "@/access/checkAccess";
+import * as path from "path";
+import { UserControllerService } from "../../generated";
+import message from "@arco-design/web-vue/es/message";
 
 const router = useRouter();
 const selectedKeys = ref(["/"]);
@@ -83,6 +96,32 @@ const doMenuClick = (key: string) => {
     path: key,
   });
 };
+
+/**
+ *
+ * 登录
+ */
+const doLogin = () => {
+  router.push({
+    path: "/user/login",
+  });
+};
+
+/**
+ * 退出登录
+ */
+const doLogout = async () => {
+  const res = await UserControllerService.userLogoutUsingPost();
+  if (res.code === 0) {
+    message.success("退出成功");
+    //重定向到登录页面
+    router.push({
+      path: "/user/login",
+    });
+  } else {
+    message.error("退出失败");
+  }
+};
 </script>
 <style scoped>
 #globalHeader {
@@ -100,5 +139,9 @@ const doMenuClick = (key: string) => {
 
 .logo {
   height: 48px;
+}
+
+# menu .arco-dropdown-open .arco-icon-down {
+  transform: rotate(180deg);
 }
 </style>

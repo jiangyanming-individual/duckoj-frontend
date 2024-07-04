@@ -36,102 +36,269 @@
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
       </template>
+      <template #userAvatar="{ record }">
+        <a-image width="50px" height="50px" :src="record.userAvatar" />
+      </template>
       <template #optional="{ record }">
         <a-space>
           <a-button
-            status="warning"
             type="primary"
-            @click="doUpdateUser(record)"
+            status="warning"
+            @click="handleUpdateClick(record)"
             >更改
           </a-button>
+
           <a-button status="danger" type="primary" @click="doDeleteUser(record)"
             >删除
           </a-button>
         </a-space>
       </template>
     </a-table>
-    <a-modal
-      v-model:visible="visible"
-      width="600px"
-      @cancel="handleCancel"
-      @before-ok="handleBeforeOk"
-      draggable
-      align-center="center"
-    >
-      <template #title>添加用户</template>
-      <div>
-        <a-card>
-          <a-form
-            layout="horizontal"
-            ref="formRef"
-            :size="form_style.size"
-            :model="form"
-            bordered="false"
-          >
-            <a-form-item
-              field="userAccount"
-              label="用户账户名"
-              :rules="[
-                { required: true, message: '账户名必须填写' },
-                { minLength: 4, message: '必须大于4位数' },
-              ]"
+    <div class="addUser">
+      <a-modal
+        v-model:visible="visible"
+        width="600px"
+        @cancel="handleCancel"
+        @before-ok="handleBeforeOk"
+        draggable
+        align-center="center"
+      >
+        <template #title>添加用户</template>
+        <div>
+          <a-card>
+            <a-form
+              layout="horizontal"
+              ref="formRef"
+              :size="form_style.size"
+              :model="form"
+              bordered="false"
             >
-              <a-input v-model="form.userAccount" placeholder="请输入账户名" />
-            </a-form-item>
-
-            <a-form-item
-              field="userPassword"
-              label="用户密码"
-              validate-trigger="input"
-              :rules="[
-                { required: true, message: '密码必须要填写' },
-                { minLength: 8, message: '必须大于8位数' },
-              ]"
-            >
-              <a-input-password
-                v-model="form.userPassword"
-                placeholder="请输入密码"
-              />
-            </a-form-item>
-
-            <a-form-item
-              field="userName"
-              label="用户名"
-              :rules="[
-                { required: true, message: '用户名必须填写' },
-                { minLength: 4, message: '必须大于4位数' },
-              ]"
-            >
-              <a-input v-model="form.userName" placeholder="请输入用户名" />
-            </a-form-item>
-            <a-form-item
-              field="userRole"
-              label="选择角色"
-              :rules="[
-                { match: /admin/, message: '必须选择一个' },
-                { required: true, message: '角色必须选择' },
-              ]"
-            >
-              <a-select
-                v-model="form.userRole"
-                placeholder="请选择角色"
-                allow-clear
+              <a-form-item
+                field="userAccount"
+                label="用户账户名"
+                :rules="[
+                  { required: true, message: '账户名必须填写' },
+                  { minLength: 4, message: '必须大于4位数' },
+                ]"
               >
-                <a-option value="admin">管理员</a-option>
-                <a-option value="user">普通用户</a-option>
-              </a-select>
-            </a-form-item>
-            <a-form-item
-              field="userAvatar"
-              label="用户头像"
-              :validate-trigger="['change', 'input']"
+                <a-input
+                  v-model="form.userAccount"
+                  placeholder="请输入账户名"
+                />
+              </a-form-item>
+
+              <a-form-item
+                field="userPassword"
+                label="用户密码"
+                validate-trigger="input"
+                :rules="[
+                  { required: true, message: '密码必须要填写' },
+                  { minLength: 8, message: '必须大于8位数' },
+                ]"
+              >
+                <a-input-password
+                  v-model="form.userPassword"
+                  placeholder="请输入密码"
+                />
+              </a-form-item>
+
+              <a-form-item
+                field="userName"
+                label="用户名"
+                :rules="[
+                  { required: true, message: '用户名必须填写' },
+                  { minLength: 4, message: '必须大于4位数' },
+                ]"
+              >
+                <a-input v-model="form.userName" placeholder="请输入用户名" />
+              </a-form-item>
+              <a-form-item
+                field="userRole"
+                label="选择角色"
+                :rules="[
+                  { match: /admin/, message: '必须选择一个' },
+                  { required: true, message: '角色必须选择' },
+                ]"
+              >
+                <a-select
+                  v-model="form.userRole"
+                  placeholder="请选择角色"
+                  allow-clear
+                >
+                  <a-option value="admin">管理员</a-option>
+                  <a-option value="user">普通用户</a-option>
+                </a-select>
+              </a-form-item>
+              <a-form-item
+                field="userAvatar"
+                label="用户头像"
+                :validate-trigger="['change', 'input']"
+              >
+                <a-upload
+                  action="/"
+                  :fileList="file ? [file] : []"
+                  :show-file-list="false"
+                  @change="onChange"
+                  @progress="onProgress"
+                >
+                  <template #upload-button>
+                    <div
+                      :class="`arco-upload-list-item${
+                        file && file.status === 'error'
+                          ? ' arco-upload-list-item-error'
+                          : ''
+                      }`"
+                    >
+                      <div
+                        class="arco-upload-list-picture custom-upload-avatar"
+                        v-if="file && file.url"
+                      >
+                        <img :src="file.url" />
+                        <div class="arco-upload-list-picture-mask">
+                          <IconEdit />
+                        </div>
+                        <a-progress
+                          v-if="
+                            file.status === 'uploading' && file.percent < 100
+                          "
+                          :percent="file.percent"
+                          type="circle"
+                          size="mini"
+                          :style="{
+                            position: 'absolute',
+                            left: '50%',
+                            top: '50%',
+                            transform: 'translateX(-50%) translateY(-50%)',
+                          }"
+                        />
+                      </div>
+                      <div class="arco-upload-picture-card" v-else>
+                        <div class="arco-upload-picture-card-text">
+                          <IconPlus />
+                          <div style="margin-top: 10px; font-weight: 600">
+                            上传
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </a-upload>
+              </a-form-item>
+            </a-form>
+          </a-card>
+        </div>
+      </a-modal>
+    </div>
+
+    <div class="updateUser">
+      <a-modal
+        v-model:visible="updateVisible"
+        width="600px"
+        @cancel="handleUpdateCancel"
+        @before-ok="handleUpdateBeforeOk"
+        draggable
+        align-center="center"
+      >
+        <template #title>更新用户</template>
+        <div>
+          <a-card>
+            <a-form
+              layout="horizontal"
+              ref="formRef"
+              :size="form_style.size"
+              :model="updateForm"
+              bordered="false"
             >
-              <a-input v-model="form.userAvatar" placeholder="请输入用户头像" />
-            </a-form-item>
-          </a-form>
-        </a-card>
-      </div>
-    </a-modal>
+              <a-form-item
+                field="userName"
+                label="用户名"
+                :rules="[
+                  { required: true, message: '用户名必须填写' },
+                  { minLength: 4, message: '必须大于4位数' },
+                ]"
+              >
+                <a-input
+                  v-model="updateForm.userName"
+                  placeholder="请输入用户名"
+                />
+              </a-form-item>
+              <a-form-item
+                field="userRole"
+                label="选择角色"
+                :rules="[
+                  { match: /admin/, message: '必须选择一个' },
+                  { required: true, message: '角色必须选择' },
+                ]"
+              >
+                <a-select
+                  v-model="updateForm.userRole"
+                  placeholder="请选择角色"
+                  allow-clear
+                >
+                  <a-option value="admin">管理员</a-option>
+                  <a-option value="user">普通用户</a-option>
+                </a-select>
+              </a-form-item>
+              <a-form-item
+                field="userAvatar"
+                label="用户头像"
+                :validate-trigger="['change', 'input']"
+              >
+                <a-upload
+                  action="/"
+                  :fileList="file ? [file] : []"
+                  :show-file-list="false"
+                  @change="onUpdateChange"
+                  @progress="onUpdateProgress"
+                >
+                  <template #upload-button>
+                    <div
+                      :class="`arco-upload-list-item${
+                        file && file.status === 'error'
+                          ? ' arco-upload-list-item-error'
+                          : ''
+                      }`"
+                    >
+                      <div
+                        class="arco-upload-list-picture custom-upload-avatar"
+                        v-if="file && file.url"
+                      >
+                        <img :src="file.url" />
+                        <div class="arco-upload-list-picture-mask">
+                          <IconEdit />
+                        </div>
+                        <a-progress
+                          v-if="
+                            file.status === 'uploading' && file.percent < 100
+                          "
+                          :percent="file.percent"
+                          type="circle"
+                          size="mini"
+                          :style="{
+                            position: 'absolute',
+                            left: '50%',
+                            top: '50%',
+                            transform: 'translateX(-50%) translateY(-50%)',
+                          }"
+                        />
+                      </div>
+                      <div class="arco-upload-picture-card" v-else>
+                        <div class="arco-upload-picture-card-text">
+                          <IconPlus />
+                          <div style="margin-top: 10px; font-weight: 600">
+                            上传
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </a-upload>
+              </a-form-item>
+            </a-form>
+          </a-card>
+        </div>
+      </a-modal>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -144,6 +311,7 @@ import {
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
+import user from "@/store/user";
 
 const router = useRouter();
 const dataList = ref([]);
@@ -229,32 +397,6 @@ const doSubmit = () => {
 };
 
 /**
- * 新增用户,路由中携带user的Id
- * @param user
- */
-const doAddUser = (user: User) => {
-  router.push({
-    path: "/admin/add/user",
-    query: {
-      id: user.id,
-    },
-  });
-};
-
-/**
- * 更新用户
- * @param user
- */
-const doUpdateUser = (user: User) => {
-  router.push({
-    path: "/admin/update/user",
-    query: {
-      id: user.id,
-    },
-  });
-};
-
-/**
  * 删除用户
  * @param user
  */
@@ -275,10 +417,24 @@ const doDeleteUser = async (user: User) => {
 };
 
 /**
- *
- * 提交表单
+ * 提交头像：
  */
+const file = ref();
+const onChange = (_, currentFile) => {
+  file.value = {
+    ...currentFile,
+  };
+  //给表单头像赋值
+  form.value.userAvatar = file.value.url;
+};
+const onProgress = (currentFile) => {
+  file.value = currentFile;
+};
 
+/**
+ *
+ * 提交addUser表单
+ */
 const handleClick = () => {
   visible.value = true;
 };
@@ -288,13 +444,65 @@ const handleCancel = () => {
 };
 
 /**
- * 提交表单
+ * 提交addUser表单
  */
 const handleBeforeOk = async () => {
   const res = await UserControllerService.addUserUsingPost({
     ...form.value,
   });
   visible.value = false;
+  if (res.code === 0) {
+    message.success("添加用户成功");
+    //重新加载数据
+    loadData();
+  } else {
+    message.error("添加用户失败");
+  }
+};
+
+/**
+ * 更新会话:管理员
+ */
+const updateVisible = ref(false);
+
+const updateForm = ref({
+  id: "",
+  userAvatar: "",
+  userName: "",
+  userProfile: "",
+  userRole: "",
+});
+
+//要更新的userId
+const handleUpdateClick = (user: User) => {
+  updateVisible.value = true;
+  updateForm.value.id = user.id as any;
+};
+
+const handleUpdateCancel = () => {
+  updateVisible.value = false;
+};
+
+//头像
+const onUpdateChange = (_, currentFile) => {
+  file.value = {
+    ...currentFile,
+  };
+  //给表单头像赋值
+  updateForm.value.userAvatar = file.value.url;
+};
+const onUpdateProgress = (currentFile) => {
+  file.value = currentFile;
+};
+
+/**
+ * 提交更新用户的请求：
+ */
+const handleUpdateBeforeOk = async () => {
+  const res = await UserControllerService.updateUserUsingPost(
+    updateForm.value as any
+  );
+  updateVisible.value = false;
   if (res.code === 0) {
     message.success("添加用户成功");
     //重新加载数据
@@ -323,6 +531,7 @@ const columns = [
   {
     title: "用户头像",
     dataIndex: "userAvatar",
+    slotName: "userAvatar",
   },
   {
     title: "用户角色",

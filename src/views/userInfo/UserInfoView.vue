@@ -1,5 +1,5 @@
 <template>
-  <div id="updateUserView">
+  <div id="addQuestionView">
     <h2 style="margin-bottom: 16px; margin-left: 32px">创建题目</h2>
     <a-form :model="form" :style="{ width: '600px' }">
       <a-form-item field="title" label="题目" tooltip="请输入题目">
@@ -260,6 +260,6 @@ const handleDelete = (index: number) => {
 };
 </script>
 <style scoped>
-#updateUserView {
+#addQuestionView {
 }
 </style>

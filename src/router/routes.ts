@@ -10,8 +10,8 @@ import QuestionView from "@/views/question/QuestionView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import UserListView from "@/views/admin/UserListView.vue";
-import AddUserView from "@/views/admin/AddUserView.vue";
-import UpdateUserView from "@/views/admin/UpdateUserView.vue";
+import UpdateUserView from "@/views/userInfo/UpdateUserView.vue";
+import UserInfoView from "@/views/userInfo/UserInfoView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -33,6 +33,11 @@ export const routes: Array<RouteRecordRaw> = [
         component: UserRegisterView,
       },
     ],
+  },
+  {
+    path: "/",
+    name: "主页",
+    component: QuestionView,
   },
 
   {
@@ -89,27 +94,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/admin/add/user",
-    name: "新增用户",
-    component: AddUserView,
-    meta: {
-      access: ACCESS_ENUM.ADMIN,
-    },
-  },
-  {
-    path: "/admin/update/user",
-    name: "更新用户",
-    component: UpdateUserView,
-    meta: {
-      access: ACCESS_ENUM.ADMIN,
-    },
-  },
-  {
-    path: "/",
-    name: "主页",
-    component: QuestionView,
-  },
-  {
     path: "/noAuth",
     name: "无权限",
     component: NoAuthView,
@@ -120,7 +104,6 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: "/about",
     name: "个人主页",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    component: UserInfoView,
   },
 ];

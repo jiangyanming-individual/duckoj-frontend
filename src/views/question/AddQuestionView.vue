@@ -161,8 +161,6 @@ const form = ref({
   },
 });
 
-//todo 修改后端的接口，获取全局的Question， 修改form为ref引用；
-
 /**
  * 加载数据：
  */
