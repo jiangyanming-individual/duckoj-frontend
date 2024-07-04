@@ -22,13 +22,13 @@
         size="large"
       >
         <a-descriptions-item label="用户名:" span="2">
-          {{ data.userName }}
+          {{ data.userName ?? "暂无信息" }}
         </a-descriptions-item>
         <a-descriptions-item label="个人简介:" span="2">
-          {{ data.userProfile }}
+          {{ data.userProfile ?? "暂无信息" }}
         </a-descriptions-item>
         <a-descriptions-item label="角色:" span="2">
-          {{ data.userRole }}
+          {{ data.userRole === "admin" ? "管理员" : "普通用户" }}
         </a-descriptions-item>
       </a-descriptions>
     </a-card>
@@ -147,20 +147,18 @@ const form_style = ref({
 let loginUser = store.state.user.loginUser;
 
 let data = ref({
-  userName: loginUser?.userName ?? "暂无信息",
+  userName: loginUser?.userName,
   userProfile: loginUser?.userProfile,
-  userAvatar: loginUser.userAvatar ?? "",
-  userRole: loginUser.userRole === "admin" ? "管理员" : "普通用户",
+  userAvatar: loginUser?.userAvatar,
+  userRole: loginUser.userRole,
 });
-// private String userName;
-// private String userAvatar;
-// private String userProfile;
 
 /**
  * 更新会话:管理员
  */
 const updateVisible = ref(false);
 
+//todo 上传头像还是不行
 const file = ref();
 const updateForm = ref({
   userAvatar: "",
@@ -211,11 +209,15 @@ const handleUpdateBeforeOk = async () => {
   updateVisible.value = false;
   if (res.code === 0) {
     message.success("编辑用户信息成功");
-    loadData();
+    data.value = res.data;
   } else {
     message.error("编辑用户信息失败," + res.message);
   }
 };
+
+onMounted(() => {
+  loadData();
+});
 </script>
 <style scoped>
 #userInfoView {
