@@ -1,265 +1,226 @@
 <template>
-  <div id="addQuestionView">
-    <h2 style="margin-bottom: 16px; margin-left: 32px">创建题目</h2>
-    <a-form :model="form" :style="{ width: '600px' }">
-      <a-form-item field="title" label="题目" tooltip="请输入题目">
-        <a-input v-model="form.title" placeholder="请输入题目" />
-      </a-form-item>
-      <a-form-item field="tags" label="标签" tooltip="请输入标签">
-        <a-input-tag v-model="form.tags" placeholder="请输入标签" allow-clear />
-      </a-form-item>
-      <a-form-item field="content" label="输入内容" tooltip="请输入内容">
-        <MdEditor
-          :value="form.content"
-          :handle-change="onContentChange"
-          style="min-width: 850px"
+  <div id="userInfoView">
+    <a-card :style="{ width: '800px' }" title="个人信息">
+      <template #extra>
+        <a-link @click="handleUpdateClick">编辑</a-link>
+      </template>
+      <a-space>
+        <p style="margin-left: 5px">头像：</p>
+        <a-image
+          width="50px"
+          height="50px"
+          :src="data.userAvatar"
+          style="margin-bottom: 5px; margin-left: 2px"
         />
-      </a-form-item>
-      <a-form-item field="answer" label="输入答案" tooltip="请输入答案">
-        <MdEditor
-          :value="form.answer"
-          :handle-change="onAnswerChange"
-          style="min-width: 850px"
-        />
-      </a-form-item>
-      <a-form-item
-        label="判题信息"
-        :content-flex="true"
-        :merge-props="false"
-        tooltip="请输人判题限制"
+      </a-space>
+      <a-descriptions
+        :data="data"
+        column="1"
+        layout="inline-horizontal"
+        style="margin-top: 10px"
+        align="left"
+        size="large"
       >
-        <a-space direction="vertical" fill style="min-width: 500px">
-          <a-form-item
-            field="judgeConfig.memoryLimit"
-            label="内存限制"
-            tooltip="单位：kb"
-          >
-            <a-input-number
-              v-model="form.judgeConfig.memoryLimit"
-              placeholder="内存限制"
-              min="1"
-              mode="button"
-            />
-          </a-form-item>
-          <a-form-item
-            field="judgeConfig.timeLimit"
-            label="时间限制"
-            tooltip="单位：ms（毫秒）"
-          >
-            <a-input-number
-              v-model="form.judgeConfig.timeLimit"
-              placeholder="时间限制"
-              min="1"
-              mode="button"
-            />
-          </a-form-item>
-          <a-form-item
-            field="judgeConfig.stackLimit"
-            label="堆栈限制"
-            tooltip="单位：kb"
-          >
-            <a-input-number
-              v-model="form.judgeConfig.stackLimit"
-              placeholder="堆栈限制"
-              min="1"
-              mode="button"
-            />
-          </a-form-item>
-        </a-space>
-      </a-form-item>
-      <a-form-item
-        label="判题用例"
-        :content-flex="false"
-        :merge-props="false"
-        tooltip="建议填写判题用例配置"
-        required
+        <a-descriptions-item label="用户名:" span="2">
+          {{ data.userName }}
+        </a-descriptions-item>
+        <a-descriptions-item label="个人简介:" span="2">
+          {{ data.userProfile }}
+        </a-descriptions-item>
+        <a-descriptions-item label="角色:" span="2">
+          {{ data.userRole }}
+        </a-descriptions-item>
+      </a-descriptions>
+    </a-card>
+
+    <div class="updateUser">
+      <a-modal
+        v-model:visible="updateVisible"
+        width="600px"
+        @cancel="handleUpdateCancel"
+        @before-ok="handleUpdateBeforeOk"
+        draggable
+        align-center="center"
       >
-        <a-form-item
-          v-for="(judgeCaseItem, index) of form.judgeCase"
-          :key="index"
-          no-style
-        >
-          <a-space direction="horizontal" style="min-width: 900px">
-            <a-form-item
-              :field="`form.judgeCase[${index}].input`"
-              :label="`输入用例-${index + 1}：`"
-              :key="index"
+        <template #title>更新用户</template>
+        <div>
+          <a-card>
+            <a-form
+              layout="horizontal"
+              ref="formRef"
+              :size="form_style.size"
+              :model="updateForm"
+              bordered="false"
             >
-              <a-input
-                v-model="judgeCaseItem.input"
-                placeholder="请输入判题输入用例"
-              />
-            </a-form-item>
-            <a-form-item
-              :field="`form.judgeCase[${index}].output`"
-              :label="`输出用例-${index + 1}：`"
-              :key="index"
-            >
-              <a-input
-                v-model="judgeCaseItem.output"
-                placeholder="请输入判题输出用例"
-              />
-              <a-button
-                type="outline"
-                status="danger"
-                :style="{ marginLeft: '16px' }"
-                @click="handleDelete(index)"
+              <a-form-item
+                field="userName"
+                label="用户名"
+                :rules="[
+                  { required: true, message: '用户名必须填写' },
+                  { minLength: 4, message: '必须大于4位数' },
+                ]"
               >
-                删除判题用例
-              </a-button>
-            </a-form-item>
-          </a-space>
-        </a-form-item>
-        <a-divider :size="2" style="border-bottom-style: dotted" />
-        <a-space direction="horizontal" size="large" style="margin-top: 16px">
-          <a-button
-            @click="handleAdd"
-            type="outline"
-            status="success"
-            shape="round"
-            >新增判题用例
-          </a-button>
-        </a-space>
-      </a-form-item>
-      <a-divider :size="2" style="border-bottom-style: dotted" />
-      <a-form-item>
-        <a-button type="primary" html-type="submit" @click="onSubmit"
-          >创建题目
-        </a-button>
-      </a-form-item>
-    </a-form>
+                <a-input
+                  v-model="updateForm.userName"
+                  placeholder="请输入用户名"
+                />
+              </a-form-item>
+              <a-form-item field="userProfile" label="个人简介">
+                <a-input
+                  v-model="updateForm.userProfile"
+                  placeholder="个人简介"
+                />
+              </a-form-item>
+              <a-form-item
+                field="userAvatar"
+                label="用户头像"
+                :validate-trigger="['change', 'input']"
+              >
+                <a-upload
+                  action="/"
+                  :fileList="file ? [file] : []"
+                  :show-file-list="false"
+                  @change="onUpdateChange"
+                  @progress="onUpdateProgress"
+                >
+                  <template #upload-button>
+                    <div
+                      :class="`arco-upload-list-item${
+                        file && file.status === 'error'
+                          ? ' arco-upload-list-item-error'
+                          : ''
+                      }`"
+                    >
+                      <div
+                        class="arco-upload-list-picture custom-upload-avatar"
+                        v-if="file && file.url"
+                      >
+                        <img :src="file.url" />
+                        <div class="arco-upload-list-picture-mask">
+                          <IconEdit />
+                        </div>
+                        <a-progress
+                          v-if="
+                            file.status === 'uploading' && file.percent < 100
+                          "
+                          :percent="file.percent"
+                          type="circle"
+                          size="mini"
+                          :style="{
+                            position: 'absolute',
+                            left: '50%',
+                            top: '50%',
+                            transform: 'translateX(-50%) translateY(-50%)',
+                          }"
+                        />
+                      </div>
+                      <div class="arco-upload-picture-card" v-else>
+                        <div class="arco-upload-picture-card-text">
+                          <IconPlus />
+                          <div style="margin-top: 10px; font-weight: 600">
+                            上传
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </a-upload>
+              </a-form-item>
+            </a-form>
+          </a-card>
+        </div>
+      </a-modal>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
+import store from "@/store";
 import { onMounted, ref } from "vue";
-import MdEditor from "@/components/MdEditor.vue";
-import { QuestionControllerService } from "../../../generated";
+import { UserControllerService } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
-import { useRoute, useRouter } from "vue-router";
 
-const router = useRouter();
-const route = useRoute();
-
-//使用路由参数：
-const updatePage = route.path.includes("update");
-
-const form = ref({
-  title: "",
-  tags: [],
-  content: "",
-  answer: "",
-  judgeCase: [
-    {
-      input: "",
-      output: "",
-    },
-  ],
-  judgeConfig: {
-    memoryLimit: 1000,
-    stackLimit: 1000,
-    timeLimit: 1000,
-  },
+//表单样式
+const form_style = ref({
+  size: "medium",
 });
 
-//todo 修改后端的接口，获取全局的Question， 修改form为ref引用；
+let loginUser = store.state.user.loginUser;
+
+let data = ref({
+  userName: loginUser?.userName ?? "暂无信息",
+  userProfile: loginUser?.userProfile,
+  userAvatar: loginUser.userAvatar ?? "",
+  userRole: loginUser.userRole === "admin" ? "管理员" : "普通用户",
+});
+// private String userName;
+// private String userAvatar;
+// private String userProfile;
 
 /**
- * 加载数据：
+ * 更新会话:管理员
  */
+const updateVisible = ref(false);
+
+const file = ref();
+const updateForm = ref({
+  userAvatar: "",
+  userName: "",
+  userProfile: "",
+});
+
+//要更新的userId
+const handleUpdateClick = () => {
+  updateVisible.value = true;
+  //回传数据
+  updateForm.value = data.value as any;
+};
+
+const handleUpdateCancel = () => {
+  updateVisible.value = false;
+};
+
+//头像
+const onUpdateChange = (_, currentFile) => {
+  file.value = {
+    ...currentFile,
+  };
+  //给表单头像赋值
+  updateForm.value.userAvatar = file.value.url;
+};
+const onUpdateProgress = (currentFile) => {
+  file.value = currentFile;
+};
+
+//加载数据
 const loadData = async () => {
-  const id = route.query.id;
-
-  if (id == null) {
-    message.info("首次加载页面");
-    return;
-  }
-  const res = await QuestionControllerService.getQuestionByIdUsingGet(
-    id as any
-  );
+  const res = await UserControllerService.getLoginUserUsingGet();
   if (res.code === 0) {
-    //设置数据：
-    form.value = res.data as any;
-    //解析json数据
-    if (!form.value.tags) {
-      form.value.tags = [];
-    } else {
-      form.value.tags = JSON.parse(form.value.tags as any);
-    }
-    if (!form.value.judgeCase) {
-      form.value.judgeCase = [
-        {
-          input: "",
-          output: "",
-        },
-      ];
-    } else {
-      form.value.judgeCase = JSON.parse(form.value.judgeCase as any);
-    }
-
-    //解析json数据
-    if (!form.value.judgeConfig) {
-      form.value.judgeConfig = {
-        memoryLimit: 1000,
-        stackLimit: 1000,
-        timeLimit: 1000,
-      };
-    } else {
-      form.value.judgeConfig = JSON.parse(form.value.judgeConfig as any);
-    }
+    message.success("获取用户信息成功");
+    data.value = res.data as any;
   } else {
-    message.error("加载数据失败！");
+    message.error("获取用户信息失败");
   }
 };
-
 /**
- * 页面加载时，加载数据
+ * 提交更新用户的请求：用户编辑个人信息
  */
-onMounted(() => {
-  loadData();
-});
-
-const onSubmit = async () => {
-  console.log(form.value);
-  if (updatePage) {
-    const res = await QuestionControllerService.updateQuestionUsingPost(
-      form.value
-    );
-    if (res.code === 0) {
-      message.success("更新題目成功!");
-    } else {
-      message.error("更新題目失败！");
-    }
+const handleUpdateBeforeOk = async () => {
+  const res = await UserControllerService.updateMyUserUsingPost(
+    updateForm.value as any
+  );
+  updateVisible.value = false;
+  if (res.code === 0) {
+    message.success("编辑用户信息成功");
+    loadData();
   } else {
-    const res = await QuestionControllerService.addQuestionUsingPost(
-      form.value
-    );
-    if (res.code === 0) {
-      message.success("添加題目成功!");
-    } else {
-      message.error("添加題目失败！");
-    }
+    message.error("编辑用户信息失败," + res.message);
   }
-};
-
-const onContentChange = (v: string) => {
-  form.value.content = v;
-};
-
-const onAnswerChange = (v: string) => {
-  form.value.answer = v;
-};
-
-const handleAdd = () => {
-  form.value.judgeCase.push({
-    input: "",
-    output: "",
-  });
-};
-const handleDelete = (index: number) => {
-  form.value.judgeCase.splice(index, 1);
 };
 </script>
 <style scoped>
-#addQuestionView {
+#userInfoView {
+  display: flex;
+  justify-content: center;
+  justify-items: center;
 }
 </style>

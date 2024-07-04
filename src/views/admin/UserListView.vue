@@ -114,7 +114,7 @@
               </a-form-item>
               <a-form-item
                 field="userRole"
-                label="选择角色"
+                label="用户角色"
                 :rules="[
                   { match: /admin/, message: '必须选择一个' },
                   { required: true, message: '角色必须选择' },
@@ -224,7 +224,7 @@
               </a-form-item>
               <a-form-item
                 field="userRole"
-                label="选择角色"
+                label="用户角色"
                 :rules="[
                   { match: /admin/, message: '必须选择一个' },
                   { required: true, message: '角色必须选择' },
@@ -412,7 +412,7 @@ const doDeleteUser = async (user: User) => {
     //加载信息的数据
     loadData();
   } else {
-    message.error("删除用户失败！");
+    message.error("添加用户失败," + res.message);
   }
 };
 
@@ -456,7 +456,7 @@ const handleBeforeOk = async () => {
     //重新加载数据
     loadData();
   } else {
-    message.error("添加用户失败");
+    message.error("添加用户失败," + res.message);
   }
 };
 
@@ -508,7 +508,7 @@ const handleUpdateBeforeOk = async () => {
     //重新加载数据
     loadData();
   } else {
-    message.error("添加用户失败");
+    message.error("添加用户失败," + res.message);
   }
 };
 

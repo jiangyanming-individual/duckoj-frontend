@@ -10,7 +10,6 @@ import QuestionView from "@/views/question/QuestionView.vue";
 import ViewQuestionView from "@/views/question/ViewQuestionView.vue";
 import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import UserListView from "@/views/admin/UserListView.vue";
-import UpdateUserView from "@/views/userInfo/UpdateUserView.vue";
 import UserInfoView from "@/views/userInfo/UserInfoView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
@@ -94,16 +93,19 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: "/about",
+    name: "个人主页",
+    component: UserInfoView,
+    meta: {
+      access: !ACCESS_ENUM.NOT_LOGIN,
+    },
+  },
+  {
     path: "/noAuth",
     name: "无权限",
     component: NoAuthView,
     meta: {
       hideInMenu: true,
     },
-  },
-  {
-    path: "/about",
-    name: "个人主页",
-    component: UserInfoView,
   },
 ];
