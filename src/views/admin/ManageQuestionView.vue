@@ -12,6 +12,7 @@
       @page-change="onPageChange"
       fixed="left"
       :scroll="scroll"
+      :scrollbar="scrollbar"
     >
       <template #tags="{ record }">
         <a-space wrap>
@@ -19,7 +20,6 @@
             v-for="(tag, index) of JSON.parse(record.tags)"
             :key="index"
             :color="colors[index]"
-            closable
             >{{ tag }}
           </a-tag>
         </a-space>
@@ -87,10 +87,12 @@ const searchParams = ref({
   current: 1,
   pageSize: 10,
 });
+const scrollbar = ref(true);
 
+//表格滚动：
 const scroll = {
-  x: "100%",
-  y: "100%",
+  x: 1500,
+  y: 500,
 };
 
 /**
@@ -178,7 +180,7 @@ const columns = [
     fixed: "left",
   },
   {
-    title: "userId",
+    title: "userID",
     dataIndex: "userId",
     fixed: "left",
   },

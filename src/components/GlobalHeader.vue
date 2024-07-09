@@ -32,8 +32,8 @@
     <a-col flex="100px">
       <div class="menu">
         <a-dropdown :popup-max-height="false" trigger="hover">
-          <a-avatar style="background: cornflowerblue"
-            >{{ store.state.user?.loginUser?.userName ?? "未登录" }}
+          <a-avatar style="background: burlywood">
+            {{ store.state.user?.loginUser?.userName ?? "未登录" }}
           </a-avatar>
           <template #content>
             <a-doption @click="doLogin"> 登录</a-doption>

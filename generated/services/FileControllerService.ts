@@ -9,23 +9,18 @@ import {request as __request} from '../core/request';
 
 export class FileControllerService {
     /**
-     * uploadFile
+     * 文件上传
      * @param file file
-     * @param biz
      * @returns BaseResponse_string_ OK
      * @returns any Created
      * @throws ApiError
      */
-    public static uploadFileUsingPost(
+    public static uploadOssFileUsingPost(
         file: Blob,
-        biz?: string,
     ): CancelablePromise<BaseResponse_string_ | any> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/file/upload',
-            query: {
-                'biz': biz,
-            },
             formData: {
                 'file': file,
             },

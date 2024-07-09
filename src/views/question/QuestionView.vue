@@ -29,14 +29,12 @@
         total,
       }"
       @page-change="onPageChange"
+      :scroll="scroll"
+      :scrollbar="scrollbar"
     >
       <template #tags="{ record }">
         <a-space wrap>
-          <a-tag
-            v-for="(tag, index) of record.tags"
-            :key="index"
-            color="green"
-            closable
+          <a-tag v-for="(tag, index) of record.tags" :key="index" color="green"
             >{{ tag }}
           </a-tag>
         </a-space>
@@ -46,7 +44,7 @@
           {{
             `${
               record.submitNum ? record.acceptedNum / record.submitNum : "0"
-            }% (${record.acceptedNum} / ${record.acceptedNum})`
+            }% (${record.acceptedNum} / ${record.submitNum})`
           }}
         </a-space>
       </template>
@@ -66,7 +64,6 @@
 <script setup lang="ts">
 import { onMounted, ref, watchEffect } from "vue";
 import {
-  Question,
   QuestionControllerService,
   QuestionQueryRequest,
   QuestionVO,
@@ -149,6 +146,14 @@ const doSubmit = () => {
     ...searchParams.value,
     current: 1,
   };
+};
+
+const scrollbar = ref(true);
+
+//表格滚动：
+const scroll = {
+  x: 1300,
+  y: 500,
 };
 
 /**

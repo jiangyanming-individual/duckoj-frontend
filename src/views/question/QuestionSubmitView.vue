@@ -39,9 +39,39 @@
         total,
       }"
       @page-change="onPageChange"
+      :scroll="scroll"
+      :scrollbar="scrollbar"
     >
       <template #judgeInfo="{ record }">
-        {{ JSON.stringify(record.judgeInfo) }}
+        <a-space direction="vertical" fill size="mini">
+          <a-tag checkable color="red" :default-checked="true">
+            message: {{ JSON.stringify(record.judgeInfo.message) }}
+          </a-tag>
+          <a-tag checkable color="arcoblue" :default-checked="true"
+            >time: {{ JSON.stringify(record.judgeInfo.time) }}
+          </a-tag>
+          <a-tag checkable color="#0fc6c2" :default-checked="true"
+            >memory: {{ JSON.stringify(record.judgeInfo.memory) }}
+          </a-tag>
+        </a-space>
+      </template>
+      <template #submitState="{ record }">
+        <div v-if="record.submitState === 0">
+          <a-tag checkable color="#86909c" :default-checked="true"
+            >待判题
+          </a-tag>
+        </div>
+        <div v-if="record.submitState === 1">
+          <a-tag checkable color="#ff7d00" :default-checked="true"
+            >判题中
+          </a-tag>
+        </div>
+        <div v-if="record.submitState === 2">
+          <a-tag checkable color="#0fc6c2" :default-checked="true">成功</a-tag>
+        </div>
+        <div v-if="record.submitState === 3">
+          <a-tag checkable color="red" :default-checked="true">失败</a-tag>
+        </div>
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
@@ -146,6 +176,13 @@ const doSubmit = () => {
   };
 };
 
+const scrollbar = ref(true);
+//表格滚动：
+const scroll = {
+  x: 1500,
+  y: 500,
+};
+
 /**
  * 表格列：
  */
@@ -163,13 +200,18 @@ const columns = [
     dataIndex: "questionId",
   },
   {
-    title: "用户ID",
-    dataIndex: "userId",
-  },
-  {
     title: "判题信息",
     dataIndex: "judgeInfo",
     slotName: "judgeInfo",
+  },
+  {
+    title: "判题状态",
+    dataIndex: "submitState",
+    slotName: "submitState",
+  },
+  {
+    title: "用户ID",
+    dataIndex: "userId",
   },
   {
     title: "创建时间",

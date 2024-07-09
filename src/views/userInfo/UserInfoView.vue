@@ -1,228 +1,221 @@
 <template>
   <div id="userInfoView">
-    <a-card :style="{ width: '800px' }" title="个人信息">
+    <a-descriptions-item>
+      <a-avatar :size="80" shape="circle">
+        <img alt="头像" :src="loginUser.userAvatar" />
+      </a-avatar>
+    </a-descriptions-item>
+    <a-card title="我的信息">
+      <a-descriptions :data="data" size="large" column="1" bordered />
       <template #extra>
-        <a-link @click="handleUpdateClick">编辑</a-link>
+        <a-badge status="success" text="在线" />
       </template>
-      <a-space>
-        <p style="margin-left: 5px">头像：</p>
-        <a-image
-          width="50px"
-          height="50px"
-          :src="data.userAvatar"
-          style="margin-bottom: 5px; margin-left: 2px"
-        />
-      </a-space>
-      <a-descriptions
-        :data="data"
-        column="1"
-        layout="inline-horizontal"
-        style="margin-top: 10px"
-        align="left"
-        size="large"
-      >
-        <a-descriptions-item label="用户名:" span="2">
-          {{ data.userName ?? "暂无信息" }}
-        </a-descriptions-item>
-        <a-descriptions-item label="个人简介:" span="2">
-          {{ data.userProfile ?? "暂无信息" }}
-        </a-descriptions-item>
-        <a-descriptions-item label="角色:" span="2">
-          {{ data.userRole === "admin" ? "管理员" : "普通用户" }}
-        </a-descriptions-item>
-      </a-descriptions>
     </a-card>
-
-    <div class="updateUser">
-      <a-modal
-        v-model:visible="updateVisible"
-        width="600px"
-        @cancel="handleUpdateCancel"
-        @before-ok="handleUpdateBeforeOk"
-        draggable
-        align-center="center"
-      >
-        <template #title>更新用户</template>
-        <div>
-          <a-card>
-            <a-form
-              layout="horizontal"
-              ref="formRef"
-              :size="form_style.size"
-              :model="updateForm"
-              bordered="false"
+    <a-modal
+      width="50%"
+      :visible="visible"
+      placement="right"
+      @ok="handleOk"
+      @cancel="closeModel"
+      unmountOnClose
+    >
+      <div style="text-align: center">
+        <a-upload
+          action="/"
+          :fileList="file ? [file] : []"
+          :show-file-list="false"
+          @change="onChange"
+          :custom-request="uploadAvatar"
+        >
+          <template #upload-button>
+            <div
+              class="arco-upload-list-picture custom-upload-avatar"
+              v-if="updateForm.userAvatar"
             >
-              <a-form-item
-                field="userName"
-                label="用户名"
-                :rules="[
-                  { required: true, message: '用户名必须填写' },
-                  { minLength: 4, message: '必须大于4位数' },
-                ]"
-              >
-                <a-input
-                  v-model="updateForm.userName"
-                  placeholder="请输入用户名"
-                />
-              </a-form-item>
-              <a-form-item field="userProfile" label="个人简介">
-                <a-input
-                  v-model="updateForm.userProfile"
-                  placeholder="个人简介"
-                />
-              </a-form-item>
-              <a-form-item
-                field="userAvatar"
-                label="用户头像"
-                :validate-trigger="['change', 'input']"
-              >
-                <a-upload
-                  action="/"
-                  :fileList="file ? [file] : []"
-                  :show-file-list="false"
-                  @change="onUpdateChange"
-                  @progress="onUpdateProgress"
-                >
-                  <template #upload-button>
-                    <div
-                      :class="`arco-upload-list-item${
-                        file && file.status === 'error'
-                          ? ' arco-upload-list-item-error'
-                          : ''
-                      }`"
-                    >
-                      <div
-                        class="arco-upload-list-picture custom-upload-avatar"
-                        v-if="file && file.url"
-                      >
-                        <img :src="file.url" />
-                        <div class="arco-upload-list-picture-mask">
-                          <IconEdit />
-                        </div>
-                        <a-progress
-                          v-if="
-                            file.status === 'uploading' && file.percent < 100
-                          "
-                          :percent="file.percent"
-                          type="circle"
-                          size="mini"
-                          :style="{
-                            position: 'absolute',
-                            left: '50%',
-                            top: '50%',
-                            transform: 'translateX(-50%) translateY(-50%)',
-                          }"
-                        />
-                      </div>
-                      <div class="arco-upload-picture-card" v-else>
-                        <div class="arco-upload-picture-card-text">
-                          <IconPlus />
-                          <div style="margin-top: 10px; font-weight: 600">
-                            上传
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </template>
-                </a-upload>
-              </a-form-item>
-            </a-form>
-          </a-card>
-        </div>
-      </a-modal>
+              <a-avatar :size="70" shape="circle">
+                <img alt="头像" :src="userAvatarImg" />
+              </a-avatar>
+              <div class="arco-upload-list-picture-mask">
+                <IconEdit />
+              </div>
+            </div>
+          </template>
+        </a-upload>
+      </div>
+      <a-form
+        :model="loginUser"
+        label-align="right"
+        title="个人信息"
+        style="max-width: 480px; margin: 0 auto"
+      >
+        <a-form-item field="用户名称" label="用户名 :">
+          <a-input v-model="updateForm.userName" placeholder="请输入用户名称" />
+        </a-form-item>
+        <a-form-item field="邮箱" label="邮箱 :">
+          <a-input v-model="updateForm.email" placeholder="请输入邮箱" />
+        </a-form-item>
+        <a-form-item field="电话" label="电话 :">
+          <a-input v-model="updateForm.phone" placeholder="请输入电话号码" />
+        </a-form-item>
+        <a-form-item field="userProfile" label="简介 :">
+          <a-textarea
+            v-model="updateForm.userProfile"
+            placeholder="请输入简介"
+          />
+        </a-form-item>
+      </a-form>
+    </a-modal>
+    <div>
+      <a-button
+        status="success"
+        size="small"
+        type="outline"
+        style="margin: 10px"
+      >
+        <a-link @click="toIndex">首页</a-link>
+      </a-button>
+      <a-button
+        status="normal"
+        size="medium"
+        type="outline"
+        style="margin: 10px"
+        @click="openModalForm"
+        >修改用户信息
+      </a-button>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import store from "@/store";
-import { onMounted, ref } from "vue";
-import { UserControllerService } from "../../../generated";
-import message from "@arco-design/web-vue/es/message";
+import { useStore } from "vuex";
+import {
+  FileControllerService,
+  UserControllerService,
+  UserUpdateMyRequest,
+} from "../../../generated";
+import { ref } from "vue";
+import { FileItem, Message } from "@arco-design/web-vue";
+import { useRouter } from "vue-router";
+import moment from "moment";
 
-//表单样式
-const form_style = ref({
-  size: "medium",
-});
-
+const router = useRouter();
+const file = ref();
+/**
+ * 获取用户信息
+ */
+const store = useStore();
 let loginUser = store.state.user.loginUser;
 
-let data = ref({
-  userName: loginUser?.userName,
-  userProfile: loginUser?.userProfile,
-  userAvatar: loginUser?.userAvatar,
-  userRole: loginUser.userRole,
+const data = [
+  {
+    label: "用户账户：",
+    value: loginUser.userAccount,
+  },
+  {
+    label: "用户昵称：",
+    value: loginUser.userName,
+  },
+  {
+    label: "我的简介：",
+    value: loginUser.userProfile,
+  },
+  {
+    label: "用户角色：",
+    value: loginUser.userRole === "user" ? "普通用户" : "管理员",
+  },
+  {
+    label: "邮箱：",
+    value: loginUser.email !== "" ? loginUser.email : "未填写",
+  },
+  {
+    label: "电话：",
+    value: loginUser.phone !== "" ? loginUser.phone : "未填写",
+  },
+  {
+    label: "当前状态：",
+    value: loginUser.userState !== "" ? loginUser.userState : "暂无简介",
+  },
+
+  {
+    label: "创建时间：",
+    value: moment(loginUser.createTime).format("YYYY-MM-DD HH:mm:ss"),
+  },
+  {
+    label: "修改时间：",
+    value: moment(loginUser.updateTime).format("YYYY-MM-DD HH:mm:ss"),
+  },
+];
+
+const visible = ref(false);
+const updateForm = ref<UserUpdateMyRequest>({
+  ...store.state.user?.loginUser,
 });
+
+// 从表单中获取的用户头像
+let userAvatarImg = updateForm.value.userAvatar;
+/**
+ * 上传头像
+ */
+const uploadAvatar = async () => {
+  const res = await FileControllerService.uploadOssFileUsingPost(
+    file?.value.file
+  );
+  if (res.code === 0) {
+    //阿里云oos的存储地址：
+    userAvatarImg = res.data;
+    Message.success("上传成功，点击确认即可修改头像");
+  } else {
+    Message.error("上传失败！" + res.message);
+  }
+};
 
 /**
- * 更新会话:管理员
+ * 打开弹窗
  */
-const updateVisible = ref(false);
-
-//todo 上传头像还是不行
-const file = ref();
-const updateForm = ref({
-  userAvatar: "",
-  userName: "",
-  userProfile: "",
-});
-
-//要更新的userId
-const handleUpdateClick = () => {
-  updateVisible.value = true;
-  //回传数据
-  updateForm.value = data.value as any;
+const openModalForm = () => {
+  visible.value = true;
 };
+/**
+ * 确定修改按钮
+ */
 
-const handleUpdateCancel = () => {
-  updateVisible.value = false;
+const handleOk = async () => {
+  const res = await UserControllerService.updateMyUserUsingPost({
+    ...updateForm.value,
+    userAvatar: userAvatarImg,
+  });
+  if (res.code === 0) {
+    Message.success("更新成功！");
+    visible.value = false;
+    location.reload();
+  } else {
+    Message.error("更新失败！", res.msg);
+  }
 };
-
-//头像
-const onUpdateChange = (_, currentFile) => {
+const closeModel = () => {
+  visible.value = false;
+};
+/**
+ * 回到首页
+ * @param question
+ */
+const toIndex = () => {
+  router.push({
+    path: `/index`,
+  });
+};
+const onChange = async (_: never, currentFile: FileItem) => {
   file.value = {
     ...currentFile,
   };
-  //给表单头像赋值
-  updateForm.value.userAvatar = file.value.url;
 };
-const onUpdateProgress = (currentFile) => {
-  file.value = currentFile;
-};
-
-//加载数据
-const loadData = async () => {
-  const res = await UserControllerService.getLoginUserUsingGet();
-  if (res.code === 0) {
-    message.success("获取用户信息成功");
-    data.value = res.data as any;
-  } else {
-    message.error("获取用户信息失败");
-  }
-};
-/**
- * 提交更新用户的请求：用户编辑个人信息
- */
-const handleUpdateBeforeOk = async () => {
-  const res = await UserControllerService.updateMyUserUsingPost(
-    updateForm.value as any
-  );
-  updateVisible.value = false;
-  if (res.code === 0) {
-    message.success("编辑用户信息成功");
-    data.value = res.data;
-  } else {
-    message.error("编辑用户信息失败," + res.message);
-  }
-};
-
-onMounted(() => {
-  loadData();
-});
 </script>
+
 <style scoped>
 #userInfoView {
-  display: flex;
-  justify-content: center;
-  justify-items: center;
+  margin: 0 auto;
+  padding: 10px;
+  max-width: 820px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(35, 7, 7, 0.21);
 }
 </style>

@@ -53,12 +53,13 @@ const form = reactive({
   userPassword: "",
 });
 const handleSubmit = async () => {
-  //登录成功跳转到登录页：
+  //登录成功跳转搜夜：
   const res = await UserControllerService.userLoginUsingPost(form);
   if (res.code === 0) {
     await store.dispatch("user/getLoginUser");
+    //跳转到首页
     router.push({
-      path: "/",
+      path: "/index",
       replace: true,
     });
   } else {

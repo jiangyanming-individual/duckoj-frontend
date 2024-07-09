@@ -4,7 +4,7 @@
       <a-form-item field="id" label="用户ID">
         <a-input
           v-model="searchParams.id"
-          placeholder="请输入题目"
+          placeholder="请输入用户Id"
           style="min-width: 240px"
         />
       </a-form-item>
@@ -25,6 +25,8 @@
     <a-table
       :columns="columns"
       :data="dataList"
+      :scroll="scroll"
+      :scrollbar="scrollbar"
       :pagination="{
         showTotal: true,
         pageSize: searchParams.pageSize,
@@ -36,8 +38,12 @@
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}
       </template>
+
       <template #userAvatar="{ record }">
         <a-image width="50px" height="50px" :src="record.userAvatar" />
+      </template>
+      <template #userRole="{ record }">
+        <p>{{ record.userRole === "user" ? "用户" : "管理员" }}</p>
       </template>
       <template #optional="{ record }">
         <a-space>
@@ -70,7 +76,7 @@
               layout="horizontal"
               ref="formRef"
               :size="form_style.size"
-              :model="form"
+              :model="addForm"
               bordered="false"
             >
               <a-form-item
@@ -82,7 +88,7 @@
                 ]"
               >
                 <a-input
-                  v-model="form.userAccount"
+                  v-model="addForm.userAccount"
                   placeholder="请输入账户名"
                 />
               </a-form-item>
@@ -97,7 +103,7 @@
                 ]"
               >
                 <a-input-password
-                  v-model="form.userPassword"
+                  v-model="addForm.userPassword"
                   placeholder="请输入密码"
                 />
               </a-form-item>
@@ -110,7 +116,10 @@
                   { minLength: 4, message: '必须大于4位数' },
                 ]"
               >
-                <a-input v-model="form.userName" placeholder="请输入用户名" />
+                <a-input
+                  v-model="addForm.userName"
+                  placeholder="请输入用户名"
+                />
               </a-form-item>
               <a-form-item
                 field="userRole"
@@ -121,7 +130,7 @@
                 ]"
               >
                 <a-select
-                  v-model="form.userRole"
+                  v-model="addForm.userRole"
                   placeholder="请选择角色"
                   allow-clear
                 >
@@ -129,6 +138,45 @@
                   <a-option value="user">普通用户</a-option>
                 </a-select>
               </a-form-item>
+
+              <a-form-item
+                field="gender"
+                label="用户性别"
+                :rules="[
+                  { match: /男/, message: '必须选择一个' },
+                  { required: true, message: '性别必须选择' },
+                ]"
+              >
+                <a-select
+                  v-model="addForm.gender"
+                  placeholder="性别"
+                  allow-clear
+                >
+                  <a-option value="男">男</a-option>
+                  <a-option value="女">女</a-option>
+                </a-select>
+              </a-form-item>
+
+              <a-form-item field="email" label="邮箱">
+                <a-input v-model="addForm.email" placeholder="请输入邮箱" />
+              </a-form-item>
+
+              <a-form-item field="phone" label="手机号">
+                <a-input v-model="addForm.phone" placeholder="请输入手机号" />
+              </a-form-item>
+
+              <a-form-item field="userState" label="用户状态">
+                <a-select
+                  v-model="addForm.userState"
+                  placeholder="请选择用户状态"
+                  allow-clear
+                >
+                  <a-option value="正常">正常</a-option>
+                  <a-option value="注销">注销</a-option>
+                  <a-option value="封号">封号</a-option>
+                </a-select>
+              </a-form-item>
+
               <a-form-item
                 field="userAvatar"
                 label="用户头像"
@@ -139,45 +187,25 @@
                   :fileList="file ? [file] : []"
                   :show-file-list="false"
                   @change="onChange"
-                  @progress="onProgress"
+                  :custom-request="uploadAvatar"
                 >
                   <template #upload-button>
                     <div
-                      :class="`arco-upload-list-item${
-                        file && file.status === 'error'
-                          ? ' arco-upload-list-item-error'
-                          : ''
-                      }`"
+                      class="arco-upload-list-picture custom-upload-avatar"
+                      v-if="addForm.userAvatar"
                     >
-                      <div
-                        class="arco-upload-list-picture custom-upload-avatar"
-                        v-if="file && file.url"
-                      >
-                        <img :src="file.url" />
-                        <div class="arco-upload-list-picture-mask">
-                          <IconEdit />
-                        </div>
-                        <a-progress
-                          v-if="
-                            file.status === 'uploading' && file.percent < 100
-                          "
-                          :percent="file.percent"
-                          type="circle"
-                          size="mini"
-                          :style="{
-                            position: 'absolute',
-                            left: '50%',
-                            top: '50%',
-                            transform: 'translateX(-50%) translateY(-50%)',
-                          }"
-                        />
+                      <a-avatar :size="60" shape="circle">
+                        <img alt="头像" :src="addForm.userAvatar" />
+                      </a-avatar>
+                      <div class="arco-upload-list-picture-mask">
+                        <IconEdit />
                       </div>
-                      <div class="arco-upload-picture-card" v-else>
-                        <div class="arco-upload-picture-card-text">
-                          <IconPlus />
-                          <div style="margin-top: 10px; font-weight: 600">
-                            上传
-                          </div>
+                    </div>
+                    <div class="arco-upload-picture-card" v-else>
+                      <div class="arco-upload-picture-card-text">
+                        <IconPlus />
+                        <div style="margin-top: 10px; font-weight: 600">
+                          上传
                         </div>
                       </div>
                     </div>
@@ -240,6 +268,47 @@
                 </a-select>
               </a-form-item>
               <a-form-item
+                field="gender"
+                label="用户性别"
+                :rules="[
+                  { match: /男/, message: '必须选择一个' },
+                  { required: true, message: '性别必须选择' },
+                ]"
+              >
+                <a-select
+                  v-model="updateForm.gender"
+                  placeholder="性别"
+                  allow-clear
+                >
+                  <a-option value="男">男</a-option>
+                  <a-option value="女">女</a-option>
+                </a-select>
+              </a-form-item>
+
+              <a-form-item field="email" label="邮箱">
+                <a-input v-model="updateForm.email" placeholder="请输入邮箱" />
+              </a-form-item>
+
+              <a-form-item field="phone" label="手机号">
+                <a-input
+                  v-model="updateForm.phone"
+                  placeholder="请输入手机号"
+                />
+              </a-form-item>
+
+              <a-form-item field="userState" label="用户状态">
+                <a-select
+                  v-model="updateForm.userState"
+                  placeholder="请选择用户状态"
+                  allow-clear
+                >
+                  <a-option value="正常">正常</a-option>
+                  <a-option value="注销">注销</a-option>
+                  <a-option value="封号">封号</a-option>
+                </a-select>
+              </a-form-item>
+
+              <a-form-item
                 field="userAvatar"
                 label="用户头像"
                 :validate-trigger="['change', 'input']"
@@ -249,45 +318,25 @@
                   :fileList="file ? [file] : []"
                   :show-file-list="false"
                   @change="onUpdateChange"
-                  @progress="onUpdateProgress"
+                  :custom-request="updateUploadAvatar"
                 >
                   <template #upload-button>
                     <div
-                      :class="`arco-upload-list-item${
-                        file && file.status === 'error'
-                          ? ' arco-upload-list-item-error'
-                          : ''
-                      }`"
+                      class="arco-upload-list-picture custom-upload-avatar"
+                      v-if="updateForm.userAvatar"
                     >
-                      <div
-                        class="arco-upload-list-picture custom-upload-avatar"
-                        v-if="file && file.url"
-                      >
-                        <img :src="file.url" />
-                        <div class="arco-upload-list-picture-mask">
-                          <IconEdit />
-                        </div>
-                        <a-progress
-                          v-if="
-                            file.status === 'uploading' && file.percent < 100
-                          "
-                          :percent="file.percent"
-                          type="circle"
-                          size="mini"
-                          :style="{
-                            position: 'absolute',
-                            left: '50%',
-                            top: '50%',
-                            transform: 'translateX(-50%) translateY(-50%)',
-                          }"
-                        />
+                      <a-avatar :size="60" shape="circle">
+                        <img alt="头像" :src="updateForm.userAvatar" />
+                      </a-avatar>
+                      <div class="arco-upload-list-picture-mask">
+                        <IconEdit />
                       </div>
-                      <div class="arco-upload-picture-card" v-else>
-                        <div class="arco-upload-picture-card-text">
-                          <IconPlus />
-                          <div style="margin-top: 10px; font-weight: 600">
-                            上传
-                          </div>
+                    </div>
+                    <div class="arco-upload-picture-card" v-else>
+                      <div class="arco-upload-picture-card-text">
+                        <IconPlus />
+                        <div style="margin-top: 10px; font-weight: 600">
+                          上传
                         </div>
                       </div>
                     </div>
@@ -304,14 +353,18 @@
 <script setup lang="ts">
 import { onMounted, ref, watchEffect } from "vue";
 import {
+  FileControllerService,
   User,
+  UserAddRequest,
   UserControllerService,
   UserQueryRequest,
+  UserUpdateRequest,
 } from "../../../generated";
 import message from "@arco-design/web-vue/es/message";
 import { useRouter } from "vue-router";
 import moment from "moment";
 import user from "@/store/user";
+import { FileItem, Message } from "@arco-design/web-vue";
 
 const router = useRouter();
 const dataList = ref([]);
@@ -325,14 +378,6 @@ const form_style = ref({
   size: "medium",
 });
 
-const form = ref({
-  userAccount: "",
-  userPassword: "",
-  userName: "",
-  userRole: "",
-  userAvatar: "",
-});
-
 //分页查询参数
 const searchParams = ref<UserQueryRequest>({
   id: undefined,
@@ -342,7 +387,7 @@ const searchParams = ref<UserQueryRequest>({
 });
 
 /**
- * 加载题目列表页：
+ * 加载用户列表：
  */
 const loadData = async () => {
   //获取数据
@@ -417,18 +462,45 @@ const doDeleteUser = async (user: User) => {
 };
 
 /**
+ * 新增form参数：
+ */
+const addForm = ref({
+  userAccount: "",
+  userAvatar: "",
+  userName: "",
+  userPassword: "",
+  userRole: "",
+  gender: "",
+  email: "",
+  phone: "",
+  userState: "",
+});
+
+/**
  * 提交头像：
  */
 const file = ref();
-const onChange = (_, currentFile) => {
+const onChange = async (_: never, currentFile: FileItem) => {
   file.value = {
     ...currentFile,
   };
-  //给表单头像赋值
-  form.value.userAvatar = file.value.url;
 };
-const onProgress = (currentFile) => {
-  file.value = currentFile;
+// const onProgress = (currentFile: FileItem) => {
+//   file.value = currentFile;
+// };
+
+//上传头像：
+const uploadAvatar = async () => {
+  const res = await FileControllerService.uploadOssFileUsingPost(
+    file.value.file
+  );
+  if (res.code === 0) {
+    //提交到阿里云：
+    addForm.value.userAvatar = res.data;
+    Message.success("上传成功，点击确认即可修改头像");
+  } else {
+    Message.error("上传失败！" + res.message);
+  }
 };
 
 /**
@@ -448,7 +520,7 @@ const handleCancel = () => {
  */
 const handleBeforeOk = async () => {
   const res = await UserControllerService.addUserUsingPost({
-    ...form.value,
+    ...addForm.value,
   });
   visible.value = false;
   if (res.code === 0) {
@@ -461,22 +533,36 @@ const handleBeforeOk = async () => {
 };
 
 /**
- * 更新会话:管理员
+ * 更新用户:管理员
  */
 const updateVisible = ref(false);
 
 const updateForm = ref({
+  email: "",
+  gender: "",
   id: "",
+  phone: "",
   userAvatar: "",
   userName: "",
   userProfile: "",
   userRole: "",
+  userState: "",
 });
+
+const loadUserInfo = async (id: number) => {
+  const res = await UserControllerService.getUserByIdUsingGet(id);
+  if (res.code === 0) {
+    updateForm.value = res.data;
+  } else {
+    message.error("加载数据失败," + res.code);
+  }
+};
 
 //要更新的userId
 const handleUpdateClick = (user: User) => {
   updateVisible.value = true;
   updateForm.value.id = user.id as any;
+  loadUserInfo(updateForm.value.id as any);
 };
 
 const handleUpdateCancel = () => {
@@ -484,15 +570,29 @@ const handleUpdateCancel = () => {
 };
 
 //头像
-const onUpdateChange = (_, currentFile) => {
+const onUpdateChange = async (_: never, currentFile: FileItem) => {
   file.value = {
     ...currentFile,
   };
   //给表单头像赋值
-  updateForm.value.userAvatar = file.value.url;
+  updateForm.value.userAvatar = file.value.file;
 };
-const onUpdateProgress = (currentFile) => {
-  file.value = currentFile;
+// const onUpdateProgress = (currentFile: FileItem) => {
+//   file.value = currentFile;
+// };
+
+//上传头像：
+const updateUploadAvatar = async () => {
+  const res = await FileControllerService.uploadOssFileUsingPost(
+    file.value.file
+  );
+  if (res.code === 0) {
+    //提交到阿里云：
+    updateForm.value.userAvatar = res.data;
+    Message.success("上传成功，点击确认即可修改头像");
+  } else {
+    Message.error("上传失败！" + res.message);
+  }
 };
 
 /**
@@ -510,6 +610,14 @@ const handleUpdateBeforeOk = async () => {
   } else {
     message.error("添加用户失败," + res.message);
   }
+};
+
+const scrollbar = ref(true);
+
+//表格滚动：
+const scroll = {
+  x: 1500,
+  y: 400,
 };
 
 /**
@@ -534,8 +642,25 @@ const columns = [
     slotName: "userAvatar",
   },
   {
-    title: "用户角色",
-    dataIndex: "userRole",
+    title: "角色",
+    slotName: "userRole",
+  },
+
+  {
+    title: "性别",
+    dataIndex: "gender",
+  },
+  {
+    title: "邮箱",
+    dataIndex: "email",
+  },
+  {
+    title: "手机号",
+    dataIndex: "phone",
+  },
+  {
+    title: "用户状态",
+    dataIndex: "userState",
   },
   {
     title: "创建时间",
