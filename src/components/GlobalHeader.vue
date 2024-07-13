@@ -32,9 +32,14 @@
     <a-col flex="100px">
       <div class="menu">
         <a-dropdown :popup-max-height="false" trigger="hover">
-          <a-avatar style="background: burlywood">
-            {{ store.state.user?.loginUser?.userName ?? "未登录" }}
-          </a-avatar>
+          <template v-if="loginUser.userAvatar">
+            <a-avatar>
+              <img alt="avatar" :src="loginUser.userAvatar" />
+            </a-avatar>
+          </template>
+          <template v-else>
+            <a-avatar>未登录</a-avatar>
+          </template>
           <template #content>
             <a-doption @click="doLogin"> 登录</a-doption>
             <a-doption @click="doLogout"> 退出</a-doption>
@@ -53,13 +58,18 @@ import { useStore } from "vuex";
 import ACCESS_ENUM from "@/access/accessEnum";
 import checkAccess from "@/access/checkAccess";
 import * as path from "path";
-import { UserControllerService } from "../../generated";
+import { LoginUserVO, UserControllerService } from "../../generated";
 import message from "@arco-design/web-vue/es/message";
 
 const router = useRouter();
 const selectedKeys = ref(["/"]);
 const store = useStore();
 
+//获取登录用户信息
+
+const loginUser: LoginUserVO = computed(
+  () => store.state.user?.loginUser
+) as LoginUserVO;
 //过滤掉不能使用的路由：
 const visiableRoutes = computed(() => {
   //通过计算属性动态更新
@@ -114,9 +124,10 @@ const doLogout = async () => {
   const res = await UserControllerService.userLogoutUsingPost();
   if (res.code === 0) {
     message.success("退出成功");
-    //重定向到登录页面
+    location.reload(); //刷新页面；
+    //重定向到首页
     router.push({
-      path: "/user/login",
+      path: "/index",
     });
   } else {
     message.error("退出失败");

@@ -5,7 +5,7 @@
         <div class="title-bar">
           <a-space>
             <img class="logo" src="../assets/duck.svg" />
-            <div class="title">Duck OJ</div>
+            <div class="title">Duck Online Judge</div>
           </a-space>
         </div>
       </a-layout-header>

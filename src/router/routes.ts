@@ -12,6 +12,7 @@ import QuestionSubmitView from "@/views/question/QuestionSubmitView.vue";
 import UserListView from "@/views/admin/UserListView.vue";
 import UserInfoView from "@/views/userInfo/UserInfoView.vue";
 import IndexView from "@/views/admin/IndexView.vue";
+import HellowView from "@/views/admin/HellowView.vue";
 
 export const routes: Array<RouteRecordRaw> = [
   {
@@ -39,7 +40,6 @@ export const routes: Array<RouteRecordRaw> = [
     name: "主页",
     component: IndexView,
   },
-
   {
     path: "/question",
     name: "浏览题目",

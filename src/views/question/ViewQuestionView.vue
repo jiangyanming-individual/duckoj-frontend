@@ -156,7 +156,7 @@ const doSubmit = async () => {
   if (res.code === 0) {
     message.success("提交代码成功!");
   } else {
-    message.error("提交代码失败！");
+    message.error("提交代码失败," + res.message);
   }
 };
 </script>

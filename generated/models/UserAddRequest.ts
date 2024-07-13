@@ -3,13 +3,14 @@
 /* tslint:disable */
 /* eslint-disable */
 export type UserAddRequest = {
-  userAccount?: string;
-  userAvatar?: string;
-  userName?: string;
-  userPassword?: string;
-  userRole?: string;
-  gender?: string;
-  email?: string;
-  phone?: string;
-  userState?: string;
+    email?: string;
+    gender?: string;
+    phone?: string;
+    userAccount?: string;
+    userAvatar?: string;
+    userName?: string;
+    userPassword?: string;
+    userRole?: string;
+    userState?: string;
 };
+

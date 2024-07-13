@@ -28,6 +28,11 @@
       <a-form-item>
         <a-button type="primary" @click="doSubmit">搜索</a-button>
       </a-form-item>
+      <a-form-item>
+        <a-button type="primary" status="danger" @click="loadData"
+          >刷新
+        </a-button>
+      </a-form-item>
     </a-form>
     <a-table
       :columns="columns"
@@ -50,7 +55,7 @@
           <a-tag checkable color="arcoblue" :default-checked="true"
             >time: {{ JSON.stringify(record.judgeInfo.time) }}
           </a-tag>
-          <a-tag checkable color="#0fc6c2" :default-checked="true"
+          <a-tag checkable color="#ffb400" :default-checked="true"
             >memory: {{ JSON.stringify(record.judgeInfo.memory) }}
           </a-tag>
         </a-space>

@@ -48,13 +48,21 @@
         title="个人信息"
         style="max-width: 480px; margin: 0 auto"
       >
-        <a-form-item field="用户名称" label="用户名 :">
+        <a-form-item field="userName" label="用户名 :">
           <a-input v-model="updateForm.userName" placeholder="请输入用户名称" />
         </a-form-item>
-        <a-form-item field="邮箱" label="邮箱 :">
+        <a-form-item
+          field="email"
+          label="邮箱 :"
+          :rules="[{ minLength: 8, message: '必须大于等于8位' }]"
+        >
           <a-input v-model="updateForm.email" placeholder="请输入邮箱" />
         </a-form-item>
-        <a-form-item field="电话" label="电话 :">
+        <a-form-item
+          field="phone"
+          label="手机号 :"
+          :rules="[{ minLength: 11, message: '必须等于11位数' }]"
+        >
           <a-input v-model="updateForm.phone" placeholder="请输入电话号码" />
         </a-form-item>
         <a-form-item field="userProfile" label="简介 :">
@@ -80,7 +88,7 @@
         type="outline"
         style="margin: 10px"
         @click="openModalForm"
-        >修改用户信息
+        >编辑个人信息
       </a-button>
     </div>
   </div>

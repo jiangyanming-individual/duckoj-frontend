@@ -8,6 +8,12 @@ import axios from "axios";
 axios.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
+    //获取到用户的token进行校验：
+    const token = localStorage.getItem("token");
+    console.log("token:" + token);
+    if (token) {
+      config.headers.Authorization = localStorage.getItem("token");
+    }
     return config;
   },
   function (error) {

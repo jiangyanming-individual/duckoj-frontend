@@ -157,11 +157,19 @@
                 </a-select>
               </a-form-item>
 
-              <a-form-item field="email" label="邮箱">
+              <a-form-item
+                field="email"
+                label="邮箱"
+                :rules="[{ minLength: 8, message: '必须大于8位数' }]"
+              >
                 <a-input v-model="addForm.email" placeholder="请输入邮箱" />
               </a-form-item>
 
-              <a-form-item field="phone" label="手机号">
+              <a-form-item
+                field="phone"
+                label="手机号"
+                :rules="[{ minLength: 11, message: '必须等于11位数' }]"
+              >
                 <a-input v-model="addForm.phone" placeholder="请输入手机号" />
               </a-form-item>
 
@@ -285,11 +293,19 @@
                 </a-select>
               </a-form-item>
 
-              <a-form-item field="email" label="邮箱">
+              <a-form-item
+                field="email"
+                label="邮箱"
+                :rules="[{ minLength: 8, message: '必须大于8位数' }]"
+              >
                 <a-input v-model="updateForm.email" placeholder="请输入邮箱" />
               </a-form-item>
 
-              <a-form-item field="phone" label="手机号">
+              <a-form-item
+                field="phone"
+                label="手机号"
+                :rules="[{ minLength: 11, message: '必须等于11位数' }]"
+              >
                 <a-input
                   v-model="updateForm.phone"
                   placeholder="请输入手机号"
