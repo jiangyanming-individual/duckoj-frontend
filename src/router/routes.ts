@@ -36,9 +36,9 @@ export const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: "/index",
+    path: "/",
     name: "主页",
-    component: IndexView,
+    component: () => import("../views/admin/SystemView.vue"),
   },
   {
     path: "/question",
@@ -50,6 +50,7 @@ export const routes: Array<RouteRecordRaw> = [
     name: "题目提交",
     component: QuestionSubmitView,
   },
+
   {
     path: "/add/question",
     name: "创建题目",

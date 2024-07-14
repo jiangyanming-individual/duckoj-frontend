@@ -43,7 +43,7 @@
         <a-space>
           {{
             `${(record.submitNum
-              ? record.acceptedNum / record.submitNum
+              ? (record.acceptedNum / record.submitNum) * 100
               : 0
             ).toFixed(2)}% (${record.acceptedNum} / ${record.submitNum})`
           }}
@@ -91,8 +91,6 @@ const loadData = async () => {
   //获取数据
   const res = await QuestionControllerService.listQuestionVoByPageUsingPost({
     ...searchParams.value,
-    sortField: "createTime",
-    sortOrder: "descend",
   });
   //获取分页数据
   if (res.code === 0) {

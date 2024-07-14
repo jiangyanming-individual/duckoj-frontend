@@ -66,10 +66,10 @@ const selectedKeys = ref(["/"]);
 const store = useStore();
 
 //获取登录用户信息
-
 const loginUser: LoginUserVO = computed(
   () => store.state.user?.loginUser
 ) as LoginUserVO;
+
 //过滤掉不能使用的路由：
 const visiableRoutes = computed(() => {
   //通过计算属性动态更新
@@ -114,6 +114,7 @@ const doMenuClick = (key: string) => {
 const doLogin = () => {
   router.push({
     path: "/user/login",
+    replace: true,
   });
 };
 
@@ -125,9 +126,9 @@ const doLogout = async () => {
   if (res.code === 0) {
     message.success("退出成功");
     location.reload(); //刷新页面；
-    //重定向到首页
+    //重定向到做题页
     router.push({
-      path: "/index",
+      path: "/question",
     });
   } else {
     message.error("退出失败");

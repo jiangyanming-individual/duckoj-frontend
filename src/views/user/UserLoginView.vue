@@ -27,10 +27,10 @@
             >登录
           </a-button>
           <a-button
-            href="/user/register"
             type="primary "
             html-type="submit"
             size="medium"
+            @click="toRegister"
             >注册
           </a-button>
         </a-space>
@@ -58,15 +58,21 @@ const handleSubmit = async () => {
   if (res.code === 0) {
     await store.dispatch("user/getLoginUser");
     //存储token
-    localStorage.setItem("token", res.data.token);
+    // localStorage.setItem("token", res.data.token);
     //跳转到首页
     router.push({
-      path: "/index",
+      path: "/",
       replace: true,
     });
   } else {
     message.error("登录失败，" + `${res?.message ?? "不能输入空内容"}`);
   }
+};
+
+const toRegister = () => {
+  router.push({
+    path: "/user/register",
+  });
 };
 </script>
 

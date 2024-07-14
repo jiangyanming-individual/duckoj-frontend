@@ -33,7 +33,7 @@
           type="primary "
           html-type="submit"
           style="width: 60px; height: 30px"
-          >注册
+          >提交
         </a-button>
       </a-form-item>
     </a-form>
@@ -60,17 +60,28 @@ const form = reactive({
  */
 
 const handleSubmit = async () => {
+  if (
+    form.userPassword.length !== form.checkPassword.length ||
+    form.userPassword !== form.checkPassword
+  ) {
+    message.error("输入密码和确认密码不一致！");
+    return;
+  }
+
   //注册登录后跳转到登录页：
   const res = await UserControllerService.userRegisterUsingPost(form);
   if (res.code === 0) {
-    message.success("注册成功!");
     //跳转到登录页面
+    //拿到用户的信息：
+    await store.dispatch("user/getLoginUser");
     router.push({
       path: "/user/login",
-      replace: true,
     });
+    message.success("注册成功!");
   } else {
-    message.error("注册失败，" + `${res?.message ?? "请输入内容注册"}`);
+    message.error(
+      "注册失败，" + `${res?.message ?? "请输入账户和密码进行注册"}`
+    );
   }
 };
 </script>

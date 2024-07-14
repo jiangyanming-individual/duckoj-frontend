@@ -13,9 +13,12 @@
         <router-view />
       </a-layout-content>
       <a-layout-footer class="footer">
-        <a href="https://blog.csdn.net/JEREMY_GYJ" target="_blank"
-          >Created By灰太狼家的小鸭子</a
-        >
+        <a-space>
+          <a href="https://blog.csdn.net/JEREMY_GYJ" target="_blank"
+            >Created By灰太狼家的小鸭子</a
+          >
+          <a href="https://beian.miit.gov.cn/">豫ICP备2024072460号</a>
+        </a-space>
       </a-layout-footer>
     </a-layout>
   </div>

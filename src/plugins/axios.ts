@@ -1,19 +1,26 @@
 // 添加请求拦截器
 import axios from "axios";
+import { OpenAPI } from "../../generated";
 
 //添加cookie
-// axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
+const baseUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8121"
+    : "http://duckoj-backend.letterduck.top"; //域名
+OpenAPI.BASE = baseUrl;
+
+console.log("当前环境：", process.env.NODE_ENV, "请求地址", baseUrl);
 
 //添加请求和相应拦截器
 axios.interceptors.request.use(
   function (config) {
     // 在发送请求之前做些什么
     //获取到用户的token进行校验：
-    const token = localStorage.getItem("token");
-    console.log("token:" + token);
-    if (token) {
-      config.headers.Authorization = localStorage.getItem("token");
-    }
+    // const token = localStorage.getItem("token");
+    // if (token) {
+    //   config.headers.Authorization = localStorage.getItem("token");
+    // }
     return config;
   },
   function (error) {

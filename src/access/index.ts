@@ -7,6 +7,7 @@ router.beforeEach(async (to, from, next) => {
   let loginUser = store.state.user.loginUser;
   //自动登录：
   if (!loginUser || !loginUser.userRole) {
+    //存储个人信息：
     await store.dispatch("user/getLoginUser");
     //登录之后，重新获取loginUser
     loginUser = store.state.user.loginUser;
