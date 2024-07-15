@@ -40,14 +40,18 @@
         </a-space>
       </template>
       <template #submitNum="{ record }">
-        <a-space>
-          {{
-            `${(record.submitNum
-              ? (record.acceptedNum / record.submitNum) * 100
+        <a-progress
+          :percent="
+            record.submitNum
+              ? (record.acceptedNum / record.submitNum).toFixed(3)
               : 0
-            ).toFixed(2)}% (${record.acceptedNum} / ${record.submitNum})`
-          }}
-        </a-space>
+          "
+          :style="{ width: '50%' }"
+          :color="{
+            '0%': 'rgb(var(--primary-6))',
+            '100%': 'rgb(var(--success-6))',
+          }"
+        />
       </template>
       <template #createTime="{ record }">
         {{ moment(record.createTime).format("YYYY-MM-DD") }}

@@ -47,16 +47,24 @@
       :scroll="scroll"
       :scrollbar="scrollbar"
     >
-      <template #judgeInfo="{ record }">
+      <template #result="{ record }">
         <a-space direction="vertical" fill size="mini">
           <a-tag checkable color="red" :default-checked="true">
-            message: {{ JSON.stringify(record.judgeInfo.message) }}
+            {{ JSON.parse(JSON.stringify(record.judgeInfo.message)) }}
           </a-tag>
-          <a-tag checkable color="arcoblue" :default-checked="true"
-            >time: {{ JSON.stringify(record.judgeInfo.time) }}
+        </a-space>
+      </template>
+      <template #time="{ record }">
+        <a-space direction="vertical" fill size="mini">
+          <a-tag checkable color="arcoblue" :default-checked="true">
+            {{ JSON.parse(JSON.stringify(record.judgeInfo.time)) + " ms" }}
           </a-tag>
-          <a-tag checkable color="#ffb400" :default-checked="true"
-            >memory: {{ JSON.stringify(record.judgeInfo.memory) }}
+        </a-space>
+      </template>
+      <template #memory="{ record }">
+        <a-space direction="vertical" fill size="mini">
+          <a-tag checkable color="#ffb400" :default-checked="true">
+            {{ JSON.parse(JSON.stringify(record.judgeInfo.memory)) + " kb" }}
           </a-tag>
         </a-space>
       </template>
@@ -205,12 +213,22 @@ const columns = [
     dataIndex: "questionId",
   },
   {
-    title: "判题信息",
+    title: "判题结果",
     dataIndex: "judgeInfo",
-    slotName: "judgeInfo",
+    slotName: "result",
   },
   {
-    title: "判题状态",
+    title: "判题时间",
+    dataIndex: "judgeInfo",
+    slotName: "time",
+  },
+  {
+    title: "消耗内存",
+    dataIndex: "judgeInfo",
+    slotName: "memory",
+  },
+  {
+    title: "判题机状态",
     dataIndex: "submitState",
     slotName: "submitState",
   },
